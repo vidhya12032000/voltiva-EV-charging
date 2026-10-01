@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Services — Voltiva</title>
+  <meta
+    name="description"
+    content="Explore Voltiva intelligent EV charging, fleet, payment, analytics and energy services."
+  />
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/services.css" />
+</head>
+
+<body class="services-page">
+
+  <!-- =====================================================
+       SVG SPRITE
+  ====================================================== -->
+  <svg class="sv-sprite" aria-hidden="true">
+    <defs>
+
+      <linearGradient id="serviceCarBody" x1="0" x2="1">
+        <stop offset="0" stop-color="#b6f035"/>
+        <stop offset="1" stop-color="#27dfa3"/>
+      </linearGradient>
+
+      <linearGradient id="serviceStation" x1="0" x2="1">
+        <stop offset="0" stop-color="#263a30"/>
+        <stop offset="1" stop-color="#0c1712"/>
+      </linearGradient>
+
+      <radialGradient id="serviceGlow">
+        <stop offset="0" stop-color="#b6f035" stop-opacity=".8"/>
+        <stop offset="1" stop-color="#b6f035" stop-opacity="0"/>
+      </radialGradient>
+
+    </defs>
+  </svg>
+
+
+  <!-- =====================================================
+       PAGE LOADER
+  ====================================================== -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-orbit">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <p>Loading Voltiva services...</p>
+  </div>
+
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+  <header class="site-header" id="siteHeader">
+
+    <a class="brand" href="../index.html" aria-label="Voltiva home">
+      <span class="brand-mark">
+        <span></span>
+      </span>
+
+      <span>
+        voltiva<span class="brand-dot">.</span>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+
+      <a class="nav-link" href="../index.html">
+        Home
+      </a>
+
+      <a class="nav-link" href="home2.html">
+        Home 2
+      </a>
+
+      <a class="nav-link" href="about.html">
+        About
+      </a>
+
+      <a class="nav-link" href="stations.html">
+        Stations
+      </a>
+
+      <a
+        class="nav-link active"
+        href="services.html"
+        aria-current="page"
+      >
+        Services
+      </a>
+
+      <a class="nav-link" href="blog.html">
+        Blog
+      </a>
+
+      <a class="nav-link" href="faq.html">
+        FAQ
+      </a>
+
+      <a class="nav-link" href="contact.html">
+        Contact
+      </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+      <button
+        class="icon-btn"
+        id="themeToggle"
+        aria-label="Toggle theme"
+      >
+        ☾
+      </button>
+
+      <button
+        class="rtl-btn"
+        id="rtlToggle"
+        aria-label="Toggle RTL"
+        aria-pressed="false"
+      >
+        RTL
+      </button>
+
+      <button
+        class="profile-btn"
+        aria-label="Account"
+      >
+        <span class="profile-avatar">V</span>
+        <span class="profile-label">Account</span>
+      </button>
+
+      <button
+        class="menu-btn"
+        id="menuBtn"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- =====================================================
+       HERO
+  ====================================================== -->
+  <main>
+
+    <section class="services-hero">
+
+      <div class="services-hero-bg"></div>
+      <div class="services-grid"></div>
+
+      <div class="hero-orb orb-one"></div>
+      <div class="hero-orb orb-two"></div>
+
+      <div class="services-hero-content">
+
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          VOLTIVA ENERGY SERVICES
+        </div>
+
+        <h1>
+          Everything your
+          <span>EV journey</span>
+          needs.
+        </h1>
+
+        <p>
+          From finding a charger to managing entire electric fleets,
+          Voltiva connects charging, energy and intelligence in one
+          seamless ecosystem.
+        </p>
+
+        <div class="hero-actions">
+
+          <a class="primary-btn" href="#services">
+            Explore services
+            <span>↗</span>
+          </a>
+
+          <a class="ghost-btn" href="#process">
+            How it works
+            <span>↓</span>
+          </a>
+
+        </div>
+
+        <div class="hero-trust">
+
+          <div class="trust-item">
+            <strong data-count="24">0</strong>
+            <span>/ 7 support</span>
+          </div>
+
+          <div class="trust-line"></div>
+
+          <div class="trust-item">
+            <strong data-count="99">0</strong>
+            <span>% uptime</span>
+          </div>
+
+          <div class="trust-line"></div>
+
+          <div class="trust-item">
+            <strong data-count="128">0</strong>
+            <span>stations</span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- HERO ENERGY SCENE -->
+      <div class="services-hero-scene" aria-hidden="true">
+
+        <div class="scene-glow"></div>
+
+        <div class="energy-ring ring-a"></div>
+        <div class="energy-ring ring-b"></div>
+        <div class="energy-ring ring-c"></div>
+
+        <div class="scene-grid"></div>
+
+        <div class="service-station">
+
+          <div class="station-top">
+            <span>VOLTIVA</span>
+          </div>
+
+          <div class="station-screen">
+            <span>FAST</span>
+            <strong>120</strong>
+            <small>kW</small>
+          </div>
+
+          <div class="station-light"></div>
+
+          <div class="station-base"></div>
+
+        </div>
+
+
+        <div class="service-car">
+
+          <div class="car-shadow"></div>
+
+          <div class="car-body">
+
+            <div class="car-roof"></div>
+
+            <div class="car-window window-one"></div>
+            <div class="car-window window-two"></div>
+
+            <div class="car-light"></div>
+
+            <div class="car-wheel wheel-one"></div>
+            <div class="car-wheel wheel-two"></div>
+
+            <div class="car-port"></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="charging-cable"></div>
+
+        <div class="energy-particle p1">⚡</div>
+        <div class="energy-particle p2">⚡</div>
+        <div class="energy-particle p3">⚡</div>
+
+        <div class="floating-chip chip-power">
+          <span>POWER</span>
+          <strong>120 kW</strong>
+        </div>
+
+        <div class="floating-chip chip-battery">
+          <span>BATTERY</span>
+          <strong>82%</strong>
+          <i><b></b></i>
+        </div>
+
+        <div class="floating-chip chip-status">
+          <span></span>
+          Charging
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SERVICE INTRO
+    ====================================================== -->
+    <section class="services-intro" id="services">
+
+      <div class="section-heading">
+
+        <div>
+
+          <div class="section-kicker">
+            WHAT WE DO
+          </div>
+
+          <h2>
+            Charging is only
+            <span>the beginning.</span>
+          </h2>
+
+        </div>
+
+        <p>
+          Voltiva combines physical charging infrastructure with
+          intelligent software, fleet tools, energy insights and
+          driver experiences.
+        </p>
+
+      </div>
+
+
+      <div class="service-filter">
+
+        <button
+          class="service-filter-btn active"
+          data-category="all"
+        >
+          All services
+        </button>
+
+        <button
+          class="service-filter-btn"
+          data-category="driver"
+        >
+          For drivers
+        </button>
+
+        <button
+          class="service-filter-btn"
+          data-category="business"
+        >
+          For business
+        </button>
+
+        <button
+          class="service-filter-btn"
+          data-category="fleet"
+        >
+          Fleet
+        </button>
+
+        <button
+          class="service-filter-btn"
+          data-category="energy"
+        >
+          Energy
+        </button>
+
+      </div>
+
+
+      <div class="services-grid-cards" id="serviceCards">
+
+
+        <!-- CARD 01 -->
+        <article
+          class="service-card"
+          data-category="driver"
+        >
+
+          <div class="service-card-top">
+
+            <span class="service-number">
+              01
+            </span>
+
+            <div class="service-icon">
+              ⚡
+            </div>
+
+            <span class="service-arrow">
+              ↗
+            </span>
+
+          </div>
+
+          <div class="service-visual visual-charge">
+            <div class="visual-pulse"></div>
+            <div class="visual-core">⚡</div>
+          </div>
+
+          <div class="service-card-content">
+
+            <span class="service-tag">
+              DRIVER
+            </span>
+
+            <h3>
+              Fast EV Charging
+            </h3>
+
+            <p>
+              Access reliable AC and DC charging with live availability,
+              power information and transparent pricing.
+            </p>
+
+            <ul>
+              <li>Live charger status</li>
+              <li>Fast charging up to 120 kW</li>
+              <li>Multiple connector types</li>
+            </ul>
+
+            <button
+              class="service-details-btn"
+              data-service="charging"
+            >
+              View details
+              <span>→</span>
+            </button>
+
+          </div>
+
+        </article>
+
+
+        <!-- CARD 02 -->
+        <article
+          class="service-card"
+          data-category="driver"
+        >
+
+          <div class="service-card-top">
+
+            <span class="service-number">
+              02
+            </span>
+
+            <div class="service-icon">
+              ◉
+            </div>
+
+            <span class="service-arrow">
+              ↗
+            </span>
+
+          </div>
+
+          <div class="service-visual visual-network">
+
+            <span class="network-node node-a"></span>
+            <span class="network-node node-b"></span>
+            <span class="network-node node-c"></span>
+            <span class="network-node node-d"></span>
+
+            <i class="network-line line-a"></i>
+            <i class="network-line line-b"></i>
+            <i class="network-line line-c"></i>
+
+          </div>
+
+          <div class="service-card-content">
+
+            <span class="service-tag">
+              DRIVER
+            </span>
+
+            <h3>
+              Smart Station Finder
+            </h3>
+
+            <p>
+              Discover nearby stations, compare availability and
+              plan charging stops before your battery gets low.
+            </p>
+
+            <ul>
+              <li>Location-based discovery</li>
+              <li>Availability tracking</li>
+              <li>Route-friendly planning</li>
+            </ul>
+
+            <button
+              class="service-details-btn"
+              data-service="finder"
+            >
+              View details
+              <span>→</span>
+            </button>
+
+          </div>
+
+        </article>
+
+
+        <!-- CARD 03 -->
+        <article
+          class="service-card"
+          data-category="business"
+        >
+
+          <div class="service-card-top">
+
+            <span class="service-number">
+              03
+            </span>
+
+            <div class="service-icon">
+              ▣
+            </div>
+
+            <span class="service-arrow">
+              ↗
+            </span>
+
+          </div>
+
+          <div class="service-visual visual-dashboard">
+
+            <div class="dashboard-bar"></div>
+            <div class="dashboard-row"></div>
+            <div class="dashboard-row short"></div>
+            <div class="dashboard-chart">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+          </div>
+
+          <div class="service-card-content">
+
+            <span class="service-tag">
+              BUSINESS
+            </span>
+
+            <h3>
+              Charging Management
+            </h3>
+
+            <p>
+              Manage charging infrastructure, station performance,
+              pricing and usage from one intelligent platform.
+            </p>
+
+            <ul>
+              <li>Centralized management</li>
+              <li>Performance monitoring</li>
+              <li>Usage analytics</li>
+            </ul>
+
+            <button
+              class="service-details-btn"
+              data-service="management"
+            >
+              View details
+              <span>→</span>
+            </button>
+
+          </div>
+
+        </article>
+
+
+        <!-- CARD 04 -->
+        <article
+          class="service-card"
+          data-category="fleet"
+        >
+
+          <div class="service-card-top">
+
+            <span class="service-number">
+              04
+            </span>
+
+            <div class="service-icon">
+              ◇
+            </div>
+
+            <span class="service-arrow">
+              ↗
+            </span>
+
+          </div>
+
+          <div class="service-visual visual-fleet">
+
+            <div class="fleet-road"></div>
+
+            <div class="fleet-car car-one"></div>
+            <div class="fleet-car car-two"></div>
+            <div class="fleet-car car-three"></div>
+
+          </div>
+
+          <div class="service-card-content">
+
+            <span class="service-tag">
+              FLEET
+            </span>
+
+            <h3>
+              Fleet Charging
+            </h3>
+
+            <p>
+              Coordinate charging across electric fleets while
+              tracking vehicle availability, energy use and costs.
+            </p>
+
+            <ul>
+              <li>Fleet visibility</li>
+              <li>Charging schedules</li>
+              <li>Cost tracking</li>
+            </ul>
+
+            <button
+              class="service-details-btn"
+              data-service="fleet"
+            >
+              View details
+              <span>→</span>
+            </button>
+
+          </div>
+
+        </article>
+
+
+        <!-- CARD 05 -->
+        <article
+          class="service-card"
+          data-category="energy"
+        >
+
+          <div class="service-card-top">
+
+            <span class="service-number">
+              05
+            </span>
+
+            <div class="service-icon">
+              ☼
+            </div>
+
+            <span class="service-arrow">
+              ↗
+            </span>
+
+          </div>
+
+          <div class="service-visual visual-energy">
+
+            <div class="sun-core"></div>
+
+            <div class="solar-ray ray-1"></div>
+            <div class="solar-ray ray-2"></div>
+            <div class="solar-ray ray-3"></div>
+            <div class="solar-ray ray-4"></div>
+
+            <div class="energy-house"></div>
+
+          </div>
+
+          <div class="service-card-content">
+
+            <span class="service-tag">
+              ENERGY
+            </span>
+
+            <h3>
+              Energy Intelligence
+            </h3>
+
+            <p>
+              Understand charging demand, energy consumption and
+              infrastructure performance with actionable insights.
+            </p>
+
+            <ul>
+              <li>Energy monitoring</li>
+              <li>Demand insights</li>
+              <li>Usage optimization</li>
+            </ul>
+
+            <button
+              class="service-details-btn"
+              data-service="energy"
+            >
+              View details
+              <span>→</span>
+            </button>
+
+          </div>
+
+        </article>
+
+
+        <!-- CARD 06 -->
+        <article
+          class="service-card"
+          data-category="business"
+        >
+
+          <div class="service-card-top">
+
+            <span class="service-number">
+              06
+            </span>
+
+            <div class="service-icon">
+              $
+            </div>
+
+            <span class="service-arrow">
+              ↗
+            </span>
+
+          </div>
+
+          <div class="service-visual visual-payment">
+
+            <div class="payment-card">
+              <span>VOLTIVA</span>
+              <strong>₹ 840</strong>
+              <small>Charging payment</small>
+            </div>
+
+            <div class="payment-wave"></div>
+
+          </div>
+
+          <div class="service-card-content">
+
+            <span class="service-tag">
+              BUSINESS
+            </span>
+
+            <h3>
+              Payments & Billing
+            </h3>
+
+            <p>
+              Create simple charging transactions with transparent
+              pricing, digital receipts and usage-based billing.
+            </p>
+
+            <ul>
+              <li>Digital payments</li>
+              <li>Usage-based billing</li>
+              <li>Transaction history</li>
+            </ul>
+
+            <button
+              class="service-details-btn"
+              data-service="payments"
+            >
+              View details
+              <span>→</span>
+            </button>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INTELLIGENCE SECTION
+    ====================================================== -->
+    <section class="intelligence-section">
+
+      <div class="intelligence-glow"></div>
+
+      <div class="intelligence-content">
+
+        <div class="section-kicker">
+          CHARGING INTELLIGENCE
+        </div>
+
+        <h2>
+          Your charging network,
+          <span>thinking ahead.</span>
+        </h2>
+
+        <p>
+          Voltiva turns charging activity into useful information,
+          helping drivers, operators and fleet teams make faster
+          decisions.
+        </p>
+
+        <div class="intelligence-metrics">
+
+          <div class="intel-metric">
+            <strong data-count="99">0</strong>
+            <span>% uptime</span>
+          </div>
+
+          <div class="intel-metric">
+            <strong data-count="120">0</strong>
+            <span>kW peak power</span>
+          </div>
+
+          <div class="intel-metric">
+            <strong data-count="486">0</strong>
+            <span>charging points</span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="intelligence-dashboard">
+
+        <div class="dashboard-header">
+
+          <div>
+            <span>NETWORK STATUS</span>
+            <strong>Live charging intelligence</strong>
+          </div>
+
+          <span class="live-pill">
+            <i></i>
+            LIVE
+          </span>
+
+        </div>
+
+
+        <div class="dashboard-energy">
+
+          <div class="energy-orbit">
+            <div class="energy-orbit-ring"></div>
+
+            <div class="energy-core">
+              <span>⚡</span>
+              <strong id="energyPower">82</strong>
+              <small>kW</small>
+            </div>
+          </div>
+
+          <div class="energy-info">
+
+            <div class="energy-row">
+              <span>Battery</span>
+              <strong id="batteryValue">78%</strong>
+            </div>
+
+            <div class="energy-progress">
+              <span id="batteryProgress"></span>
+            </div>
+
+            <div class="energy-row">
+              <span>Estimated time</span>
+              <strong id="timeValue">18 min</strong>
+            </div>
+
+            <div class="energy-row">
+              <span>Network load</span>
+              <strong>64%</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="dashboard-chart-wrap">
+
+          <div class="chart-labels">
+            <span>Power usage</span>
+            <strong>Last 60 min</strong>
+          </div>
+
+          <div class="power-chart">
+
+            <svg
+              viewBox="0 0 600 180"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+
+              <defs>
+                <linearGradient
+                  id="chartFill"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="0"
+                    stop-color="#b6f035"
+                    stop-opacity=".35"
+                  />
+                  <stop
+                    offset="1"
+                    stop-color="#b6f035"
+                    stop-opacity="0"
+                  />
+                </linearGradient>
+              </defs>
+
+              <path
+                class="chart-area"
+                d="M0 140
+                   C60 120 75 105 120 115
+                   S170 80 220 100
+                   S270 60 320 80
+                   S370 40 420 65
+                   S470 35 520 58
+                   S560 28 600 40
+                   L600 180
+                   L0 180 Z"
+              />
+
+              <path
+                class="chart-line"
+                d="M0 140
+                   C60 120 75 105 120 115
+                   S170 80 220 100
+                   S270 60 320 80
+                   S370 40 420 65
+                   S470 35 520 58
+                   S560 28 600 40"
+              />
+
+            </svg>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PROCESS
+    ====================================================== -->
+    <section class="service-process" id="process">
+
+      <div class="section-heading centered">
+
+        <div class="section-kicker">
+          SIMPLE BY DESIGN
+        </div>
+
+        <h2>
+          From plug-in to
+          <span>power-on.</span>
+        </h2>
+
+        <p>
+          A smooth charging experience from discovery to completion.
+        </p>
+
+      </div>
+
+
+      <div class="process-track">
+
+        <div class="process-line">
+          <span></span>
+        </div>
+
+
+        <article class="service-process-step">
+
+          <div class="process-icon">
+            01
+          </div>
+
+          <div>
+            <h3>Find</h3>
+            <p>
+              Discover a nearby compatible charging station.
+            </p>
+          </div>
+
+        </article>
+
+
+        <article class="service-process-step">
+
+          <div class="process-icon">
+            02
+          </div>
+
+          <div>
+            <h3>Connect</h3>
+            <p>
+              Plug in your vehicle and start your charging session.
+            </p>
+          </div>
+
+        </article>
+
+
+        <article class="service-process-step">
+
+          <div class="process-icon">
+            03
+          </div>
+
+          <div>
+            <h3>Charge</h3>
+            <p>
+              Monitor live power, battery level and session progress.
+            </p>
+          </div>
+
+        </article>
+
+
+        <article class="service-process-step">
+
+          <div class="process-icon">
+            04
+          </div>
+
+          <div>
+            <h3>Go</h3>
+            <p>
+              Finish your session and continue your journey.
+            </p>
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SERVICE DETAIL PANEL
+    ====================================================== -->
+    <section class="service-detail-section">
+
+      <div class="detail-visual">
+
+        <div class="detail-orbit orbit-one"></div>
+        <div class="detail-orbit orbit-two"></div>
+
+        <div class="detail-core">
+          <span>⚡</span>
+        </div>
+
+        <div class="detail-node node-1">
+          <span>F</span>
+          Fast
+        </div>
+
+        <div class="detail-node node-2">
+          <span>A</span>
+          Analytics
+        </div>
+
+        <div class="detail-node node-3">
+          <span>E</span>
+          Energy
+        </div>
+
+        <div class="detail-node node-4">
+          <span>F</span>
+          Fleet
+        </div>
+
+      </div>
+
+
+      <div class="detail-content">
+
+        <div class="section-kicker">
+          ONE CONNECTED PLATFORM
+        </div>
+
+        <h2>
+          Built around the
+          <span>whole journey.</span>
+        </h2>
+
+        <p>
+          Whether you're charging one vehicle or managing thousands,
+          Voltiva brings the important pieces together.
+        </p>
+
+        <div class="detail-list">
+
+          <div class="detail-list-item active">
+
+            <span>01</span>
+
+            <div>
+              <strong>Driver experience</strong>
+              <p>
+                Search, charge, pay and track sessions.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="detail-list-item">
+
+            <span>02</span>
+
+            <div>
+              <strong>Business operations</strong>
+              <p>
+                Monitor stations and charging performance.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="detail-list-item">
+
+            <span>03</span>
+
+            <div>
+              <strong>Fleet intelligence</strong>
+              <p>
+                Coordinate charging across vehicles.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="detail-list-item">
+
+            <span>04</span>
+
+            <div>
+              <strong>Energy visibility</strong>
+              <p>
+                Understand energy usage and demand.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FAQ
+    ====================================================== -->
+    <section class="services-faq">
+
+      <div class="section-heading centered">
+
+        <div class="section-kicker">
+          QUICK ANSWERS
+        </div>
+
+        <h2>
+          Questions about
+          <span>charging?</span>
+        </h2>
+
+      </div>
+
+
+      <div class="faq-grid">
+
+        <details class="service-faq-item">
+          <summary>
+            What charging speeds are supported?
+            <span>+</span>
+          </summary>
+
+          <p>
+            Voltiva stations can support different AC and DC charging
+            configurations. The available power depends on the station
+            and vehicle compatibility.
+          </p>
+        </details>
+
+
+        <details class="service-faq-item">
+          <summary>
+            Can I find available chargers?
+            <span>+</span>
+          </summary>
+
+          <p>
+            Yes. Station availability can be checked through the
+            charging network interface before starting a session.
+          </p>
+        </details>
+
+
+        <details class="service-faq-item">
+          <summary>
+            Does Voltiva support fleet operations?
+            <span>+</span>
+          </summary>
+
+          <p>
+            Fleet tools can be used to monitor vehicles, charging
+            activity, energy consumption and operational information.
+          </p>
+        </details>
+
+
+        <details class="service-faq-item">
+          <summary>
+            Can businesses monitor charging performance?
+            <span>+</span>
+          </summary>
+
+          <p>
+            Business operators can use centralized dashboards to
+            understand station usage, charging activity and network
+            performance.
+          </p>
+        </details>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CTA
+    ====================================================== -->
+    <section class="services-cta">
+
+      <div class="cta-energy"></div>
+
+      <div class="cta-grid"></div>
+
+      <div class="cta-content">
+
+        <div class="section-kicker">
+          READY TO MOVE?
+        </div>
+
+        <h2>
+          Power your next
+          <span>journey.</span>
+        </h2>
+
+        <p>
+          Explore the Voltiva charging network and experience
+          intelligent EV infrastructure built for the road ahead.
+        </p>
+
+        <a
+          class="primary-btn"
+          href="stations.html"
+        >
+          Find a station
+          <span>↗</span>
+        </a>
+
+      </div>
+
+
+      <div class="cta-road">
+
+        <div class="cta-road-line"></div>
+
+        <div class="cta-mini-car">
+          <div class="mini-car-body"></div>
+          <i></i>
+          <i></i>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =====================================================
+       FOOTER
+  ====================================================== -->
+  <footer class="site-footer">
+
+    <div class="footer-top">
+
+      <a class="brand" href="../index.html">
+
+        <span class="brand-mark">
+          <span></span>
+        </span>
+
+        <span>
+          voltiva<span class="brand-dot">.</span>
+        </span>
+
+      </a>
+
+      <p>
+        Intelligent charging for a moving world.
+      </p>
+
+      <div class="footer-links">
+
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      <span>
+        © 2026 Voltiva. Portfolio project.
+      </span>
+
+      <span>
+        Designed for the road ahead ⚡
+      </span>
+
+    </div>
+
+  </footer>
+
+
+  <!-- SERVICE MODAL -->
+  <dialog
+    class="service-dialog"
+    id="serviceDialog"
+  >
+
+    <button
+      class="dialog-close"
+      id="serviceDialogClose"
+      aria-label="Close"
+    >
+      ×
+    </button>
+
+    <div id="serviceDialogBody"></div>
+
+  </dialog>
+
+
+  <!-- SCROLL ROAD -->
+  <div
+    class="scroll-road"
+    id="scrollRoad"
+    aria-hidden="true"
+  >
+    <div
+      class="scroll-road-fill"
+      id="roadFill"
+    ></div>
+  </div>
+
+
+  <!-- TOAST -->
+  <div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+
+  <!-- BACK TO TOP -->
+  <button
+    class="back-top"
+    id="backTop"
+    aria-label="Back to top"
+  >
+    ↑
+  </button>
+
+
+  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/services.js"></script>
+
+</body>
+</html>

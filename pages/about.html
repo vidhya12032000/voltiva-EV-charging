@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Discover Voltiva — intelligent EV charging infrastructure built for drivers, fleets and businesses.">
+  <title>About Us | Voltiva</title>
+  <!-- theme + direction applied before first paint -->
+  <script>try{var d=document.documentElement;d.dataset.theme=localStorage.getItem('vt-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');d.dir=localStorage.getItem('vt-dir')||'ltr'}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/about.css">
+    <link rel="icon" type="image/x-icon" href="/assets/images/lightening-svgrepo-com.svg">
+</head>
+<body>
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-logo"><span class="loader-mark"><span></span></span><span>voltiva<span class="brand-dot">.</span></span></div>
+    <div class="loader-energy"><span></span></div>
+  </div>
+  <div class="progress" id="progress"></div>
+
+  <header class="site-header" id="siteHeader">
+       <a class="brand" href="../index.html" aria-label="Voltiva home">
+    <img src="/assets/images/lightening-svgrepo-com.svg" width="40px" height="40px">
+</span></span><span>voltiva<span class="brand-dot">.</span></span></a>
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <a class="nav-link" href="../index.html">Home</a>
+      <a class="nav-link" href="home2.html">Home 2</a>
+      <a class="nav-link active" href="about.html">About</a>
+      <a class="nav-link" href="stations.html">Stations</a>
+      <a class="nav-link" href="services.html">Services</a>
+      <a class="nav-link" href="blog.html">Blog</a>
+      <a class="nav-link" href="faq.html">FAQ</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☾</button>
+      <button class="rtl-btn" id="rtlToggle" aria-label="Toggle RTL" aria-pressed="false">RTL</button>
+      <button class="profile-btn" aria-label="Account"><span class="profile-avatar">V</span><span class="profile-label">Account</span></button>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="about-hero" id="aboutHero">
+      <div class="about-hero-grid" aria-hidden="true"></div>
+      <span class="energy-particle particle-1" aria-hidden="true">+</span>
+      <span class="energy-particle particle-2" aria-hidden="true">⚡</span>
+      <span class="energy-particle particle-3" aria-hidden="true">+</span>
+      <span class="energy-particle particle-4" aria-hidden="true">⚡</span>
+
+      <div class="about-hero-content reveal reveal-left">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> ABOUT VOLTIVA</div>
+        <h1>Powering the <span class="gradient-text">future</span> of mobility.</h1>
+        <p class="about-hero-description">We are building intelligent EV charging infrastructure that makes electric mobility simpler, faster and more connected.</p>
+        <div class="about-hero-actions">
+          <a href="stations.html" class="btn btn-primary magnetic-btn">Find a Station <span class="btn-arrow">→</span></a>
+          <a href="#story" class="btn btn-outline">Our Story <span class="btn-arrow">↓</span></a>
+        </div>
+        <div class="about-hero-stats">
+          <div class="hero-stat"><strong><b data-counter="250">0</b>+</strong><span>Charging Points</span></div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat"><strong><b data-counter="18">0</b>K+</strong><span>EV Drivers</span></div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat"><strong><b data-counter="96">0</b>%</strong><span>Network Uptime</span></div>
+        </div>
+      </div>
+
+      <div class="about-hero-visual reveal reveal-right" aria-hidden="true">
+        <div class="hero-stage">
+          <div class="hero-energy-orbit orbit-large"></div>
+          <div class="hero-energy-orbit orbit-medium"></div>
+          <div class="hero-energy-orbit orbit-small"></div>
+          <div class="hero-photo">
+            <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=75" alt="" loading="eager">
+            <span class="core-ring"></span>
+            <span class="core-bolt">⚡</span>
+          </div>
+          <div class="hero-floating-card card-status"><span class="status-indicator"></span><div><small>Network</small><strong>Online</strong></div></div>
+          <div class="hero-floating-card card-power"><span class="power-icon">⚡</span><div><small>Current Power</small><strong>120 kW</strong></div></div>
+          <div class="hero-floating-card card-clean"><span>♻</span><strong>Cleaner Energy</strong></div>
+        </div>
+      </div>
+
+      <a href="#story" class="about-scroll-indicator" aria-label="Scroll to our story"><span>Scroll to explore</span><i></i></a>
+    </section>
+
+    <!-- MARQUEE -->
+    <section class="about-marquee" aria-hidden="true">
+      <div class="about-marquee-track">
+        <span>EV DRIVERS</span><span>FLEETS</span><span>BUSINESSES</span><span>SMART CITIES</span><span>HIGHWAYS</span><span>RESIDENTIAL</span><span>PARTNERS</span>
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section class="about-story section-padding" id="story">
+      <div class="section-container">
+        <div class="section-heading reveal reveal-left">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> OUR STORY</div>
+          <h2>From a simple idea to a smarter <span class="gradient-text">charging network.</span></h2>
+          <p>Voltiva started with one question: <strong>Why should charging feel complicated?</strong> We set out to connect EV drivers, charging infrastructure and intelligent technology into one seamless ecosystem.</p>
+        </div>
+
+        <div class="story-timeline" id="storyTimeline">
+          <div class="timeline-line"><span class="timeline-progress" id="timelineProgress"></span></div>
+
+          <article class="timeline-item" data-year="2022">
+            <div class="timeline-marker"><span></span></div>
+            <div class="timeline-content reveal reveal-left"><span class="timeline-year">2022</span><h3>The idea begins.</h3><p>We imagined a charging experience where drivers could find, understand and use charging infrastructure without friction.</p></div>
+            <div class="timeline-visual reveal reveal-right"><figure class="timeline-photo"><img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=700&q=70" alt="Team planning together" loading="lazy"><figcaption></figcaption></figure></div>
+          </article>
+
+          <article class="timeline-item timeline-reverse" data-year="2023">
+            <div class="timeline-marker"><span></span></div>
+            <div class="timeline-content reveal reveal-right"><span class="timeline-year">2023</span><h3>Growing the network.</h3><p>Charging points expanded across high-demand locations, making reliable charging more accessible to everyday EV drivers.</p></div>
+            <div class="timeline-visual reveal reveal-left"><figure class="timeline-photo"><img src="/assets/images/2023.jpg" alt="EV plugged in at a charger" loading="lazy"><figcaption><img src="/assets/images/network-shield-svgrepo-com.svg"></figcaption></figure></div>
+          </article>
+
+          <article class="timeline-item" data-year="2024">
+            <div class="timeline-marker"><span></span></div>
+            <div class="timeline-content reveal reveal-left"><span class="timeline-year">2024</span><h3>Intelligence enters charging.</h3><p>Real-time station information, load monitoring and smarter charging experiences became part of the Voltiva ecosystem.</p></div>
+            <div class="timeline-visual reveal reveal-right"><figure class="timeline-photo"><img src="/assets/images/ai.jpg" alt="Connected charging station" loading="lazy"><figcaption><img src="/assets/images/chip-ai-svgrepo-com.svg"></figcaption></figure></div>
+          </article>
+
+          <article class="timeline-item timeline-reverse" data-year="2026">
+            <div class="timeline-marker"><span></span></div>
+            <div class="timeline-content reveal reveal-right"><span class="timeline-year">2026</span><h3>Building intelligent mobility.</h3><p>Voltiva is evolving beyond charging into a connected mobility platform for drivers, fleets and businesses.</p></div>
+            <div class="timeline-visual reveal reveal-left"><figure class="timeline-photo"><img src="https://images.unsplash.com/photo-1625047509248-ec889cbff17f?auto=format&fit=crop&w=700&q=70" alt="Modern EV on the road" loading="lazy"></figure></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- MISSION + VISION -->
+    <section class="mission-section section-padding" id="mission">
+      <div class="section-container"><div class="mission-grid">
+        <article class="mission-card mission-card-main reveal reveal-left">
+          <div class="mission-card-top"><span class="mission-icon"><img src="/assets/images/lightening-svgrepo-com.svg"></span><span class="mission-number">01</span></div>
+          <div class="mission-energy-line"></div>
+          <h2>Our Mission</h2><p>Make EV charging simple, accessible and intelligent for everyone.</p>
+          <div class="mission-tags"><span>Simple</span><span>Connected</span><span>Intelligent</span></div>
+        </article>
+        <article class="mission-card reveal reveal-right">
+          <div class="mission-card-top"><span class="mission-icon"><img src="/assets/images/target-2-svgrepo-com.svg"></span><span class="mission-number">02</span></div>
+          <div class="mission-energy-line"></div>
+          <h2>Our Vision</h2><p>Create a connected mobility ecosystem where every journey starts with confidence.</p>
+          <div class="vision-orbit"><span></span><span></span><span></span><strong>EV</strong></div>
+        </article>
+      </div></div>
+    </section>
+
+    <!-- NUMBERS -->
+    <section class="numbers-section section-padding" id="numbers">
+      <div class="numbers-glow"></div>
+      <div class="section-container">
+        <div class="section-heading centered reveal"><div class="eyebrow"><span class="eyebrow-dot"></span> VOLTIVA NETWORK</div><h2>Built to keep <span class="gradient-text">moving.</span></h2></div>
+        <div class="numbers-grid">
+          <div class="number-card reveal reveal-left"><strong><b data-counter="250">0</b>+</strong><span>Charging Points</span></div>
+          <div class="number-card reveal reveal-delay-1"><strong><b data-counter="18">0</b>K+</strong><span>EV Drivers</span></div>
+          <div class="number-card reveal reveal-delay-2"><strong><b data-counter="96">0</b>%</strong><span>Network Uptime</span></div>
+          <div class="number-card reveal reveal-right"><strong><b data-counter="12">0</b></strong><span>Cities Connected</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMPACT CALCULATOR (new) -->
+    <section class="calc-section section-padding" id="impact">
+      <div class="section-container">
+        <div class="section-heading reveal reveal-left">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> YOUR IMPACT</div>
+          <h2>See what switching <span class="gradient-text">could save you.</span></h2>
+          <p>Slide to your monthly driving. Estimates compare a petrol car with an EV charged on the Voltiva network.</p>
+        </div>
+        <div class="calc-card reveal">
+          <div class="calc-controls">
+            <div class="calc-label"><label for="kmRange">Driving per month</label><output id="kmOut" for="kmRange">1,000 km</output></div>
+            <input type="range" id="kmRange" min="200" max="3000" step="50" value="1000">
+            <div class="calc-seg" role="group" aria-label="Car type">
+              <button class="seg active" data-car="hatch">Hatchback</button>
+              <button class="seg" data-car="suv">SUV</button>
+            </div>
+            <p class="calc-note">Assumptions: petrol ₹100/L · hatchback 15 km/L, SUV 10 km/L · EV 0.15 / 0.20 kWh per km at ₹18/kWh · petrol 2.3 kg CO₂/L · grid 0.7 kg CO₂/kWh. Real results vary.</p>
+          </div>
+          <div class="calc-results">
+            <div class="calc-result"><small>Saved per month</small><strong id="rMoney">₹0</strong></div>
+            <div class="calc-result"><small>Saved per year</small><strong id="rYear">₹0</strong></div>
+            <div class="calc-result"><small>CO₂ avoided / year</small><strong id="rCo2">0 kg</strong></div>
+            <div class="calc-result"><small>Trees equivalent</small><strong id="rTrees">0</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLOW -->
+    <section class="ecosystem-flow section-padding" id="ecosystemFlow">
+      <div class="section-container">
+        <div class="section-heading reveal reveal-left"><div class="eyebrow"><span class="eyebrow-dot"></span> THE VOLTIVA FLOW</div><h2>One connected <span class="gradient-text">charging journey.</span></h2><p>Every part of the experience is connected — from finding a station to completing your charge.</p></div>
+        <div class="flow-wrapper">
+          <div class="flow-line"><span class="flow-line-progress"></span></div>
+          <article class="flow-card reveal reveal-left"><div class="flow-number">01</div><div class="flow-icon"><img src="/assets/images/magnifying-glass-find-search-svgrepo-com.svg"></div><h3>Find</h3><p>Discover available charging stations nearby.</p></article>
+          <article class="flow-card reveal reveal-delay-1"><div class="flow-number">02</div><div class="flow-icon"><img src="/assets/images/location-map-svgrepo-com.svg"></div><h3>Navigate</h3><p>Get directions and arrive without guesswork.</p></article>
+          <article class="flow-card reveal reveal-delay-2"><div class="flow-number">03</div><div class="flow-icon"><img src="/assets/images/lightening-svgrepo-com.svg"></div><h3>Charge</h3><p>Start charging with live station information.</p></article>
+          <article class="flow-card reveal reveal-right"><div class="flow-number">04</div><div class="flow-icon"><img src="/assets/images/car-svgrepo-com.svg"></div><h3>Go</h3><p>Complete your journey and keep moving.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECHNOLOGY -->
+    <section class="technology-section section-padding" id="technology">
+      <div class="section-container"><div class="technology-grid">
+        <div class="technology-content reveal reveal-left">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> SMART TECHNOLOGY</div>
+          <h2>Charging that <span class="gradient-text">thinks ahead.</span></h2>
+          <p>Voltiva combines live network intelligence with connected infrastructure to create a more predictable charging experience.</p>
+          <div class="technology-features">
+            <div class="technology-feature"><span class="feature-check">✓</span><div><strong>Real-Time Monitoring</strong><span>Track station availability and charging status.</span></div></div>
+            <div class="technology-feature"><span class="feature-check">✓</span><div><strong>Intelligent Load Management</strong><span>Balance charging demand across the network.</span></div></div>
+            <div class="technology-feature"><span class="feature-check">✓</span><div><strong>Connected Mobility</strong><span>Bring drivers, fleets and charging infrastructure together.</span></div></div>
+          </div>
+        </div>
+        <div class="technology-visual reveal reveal-right" id="technologyVisual">
+          <div class="tech-grid"></div>
+          <div class="tech-orbit tech-orbit-1"><span></span></div><div class="tech-orbit tech-orbit-2"><span></span></div><div class="tech-orbit tech-orbit-3"><span></span></div>
+          <div class="tech-core"><span>⚡</span><small>SMART</small></div>
+          <div class="tech-data tech-data-1"><span>●</span><div><small>Network</small><strong>Live</strong></div></div>
+          <div class="tech-data tech-data-2"><span>⚡</span><div><small>Power</small><strong id="techPower">120 kW</strong></div></div>
+          <div class="tech-data tech-data-3"><span>◉</span><div><small>Load</small><strong id="techLoad">64%</strong></div></div>
+          <div class="tech-data tech-data-4"><span>↗</span><div><small>Efficiency</small><strong>+28%</strong></div></div>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- WHY -->
+    <section class="why-section section-padding" id="whyVoltiva">
+      <div class="section-container">
+        <div class="section-heading centered reveal"><div class="eyebrow"><span class="eyebrow-dot"></span> WHY VOLTIVA</div><h2>Designed around <span class="gradient-text">real journeys.</span></h2><p>Technology should disappear into the experience. These are the details that make Voltiva work.</p></div>
+        <div class="why-grid">
+          <article class="why-card reveal reveal-left"><div class="why-card-icon">⚡</div><span class="why-card-number">01</span><h3>Fast Charging</h3><p>High-power charging options designed for shorter stops.</p><span class="why-card-arrow">→</span></article>
+          <article class="why-card reveal reveal-delay-1"><div class="why-card-icon">◉</div><span class="why-card-number">02</span><h3>Live Availability</h3><p>See station status before you arrive.</p><span class="why-card-arrow">→</span></article>
+          <article class="why-card reveal reveal-right"><div class="why-card-icon">₹</div><span class="why-card-number">03</span><h3>Transparent Pricing</h3><p>Clear charging rates without unexpected surprises.</p><span class="why-card-arrow">→</span></article>
+          <article class="why-card reveal reveal-left"><div class="why-card-icon">◈</div><span class="why-card-number">04</span><h3>Secure Payments</h3><p>Simple and secure payment experiences for every session.</p><span class="why-card-arrow">→</span></article>
+          <article class="why-card reveal reveal-delay-1"><div class="why-card-icon">➤</div><span class="why-card-number">05</span><h3>Smart Routing</h3><p>Find charging stops that fit naturally into your journey.</p><span class="why-card-arrow">→</span></article>
+          <article class="why-card reveal reveal-right"><div class="why-card-icon">◫</div><span class="why-card-number">06</span><h3>Fleet Management</h3><p>Charging intelligence for businesses and EV fleets.</p><span class="why-card-arrow">→</span></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUSTAINABILITY -->
+    <section class="sustainability-section section-padding" id="sustainability">
+      <div class="sustainability-particles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="section-container"><div class="sustainability-grid">
+        <div class="sustainability-visual reveal reveal-left" aria-hidden="true">
+          <div class="eco-orbit eco-orbit-1"></div><div class="eco-orbit eco-orbit-2"></div><div class="eco-orbit eco-orbit-3"></div>
+          <div class="eco-core"><img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=700&q=70" alt=""><small>CLEANER</small></div>
+          <div class="eco-floating eco-one">CO₂ ↓</div><div class="eco-floating eco-two">🌱 EV +</div><div class="eco-floating eco-three">♻</div>
+        </div>
+        <div class="sustainability-content reveal reveal-right">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> MOVING TOWARD CLEANER MOBILITY</div>
+          <h2>Every charge can move us toward a <span class="gradient-text">cleaner future.</span></h2>
+          <p>Electric mobility is more than replacing a fuel source. It is an opportunity to build a smarter, more connected and more sustainable transportation ecosystem.</p>
+          <div class="sustainability-metric"><div><strong><b data-counter="84">0</b></strong> <span>tons</span></div><p>Estimated CO₂ emissions avoided through connected EV journeys.</p></div>
+          <div class="sustainability-tags"><span>Cleaner mobility</span><span>Smart energy</span><span>Connected cities</span></div>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- GALLERY (new, with lightbox) -->
+    <section class="gallery-section section-padding" id="gallery">
+      <div class="section-container">
+        <div class="section-heading reveal reveal-left"><div class="eyebrow"><span class="eyebrow-dot"></span> ON THE ROAD</div><h2>Life on the <span class="gradient-text">Voltiva network.</span></h2><p>Tap any photo to view it larger. Use the arrow keys to browse.</p></div>
+        <div class="gallery-grid">
+          <button class="gal-item g1 reveal reveal-left" data-cap="Fast charging, anywhere"><img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1200&q=75" alt="EV charging at a fast charger" loading="lazy"><span>Fast charging, anywhere</span></button>
+          <button class="gal-item reveal" data-cap="Connected stations"><img src="/assets/images/connected.jpg" alt="Connected charging station" loading="lazy"><span>Connected stations</span></button>
+          <button class="gal-item reveal reveal-right" data-cap="Cleaner cities"><img src="https://images.unsplash.com/photo-1625047509248-ec889cbff17f?auto=format&fit=crop&w=1200&q=75" alt="EV in the city" loading="lazy"><span>Cleaner cities</span></button>
+          <button class="gal-item g4 reveal reveal-left" data-cap="Powered by renewables"><img src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1200&q=75" alt="Wind and solar energy" loading="lazy"><span>Powered by renewables</span></button>
+          <button class="gal-item reveal reveal-right" data-cap="Solar-backed hubs"><img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1200&q=75" alt="Solar panels" loading="lazy"><span>Solar-backed hubs</span></button>
+          <button class="gal-item reveal" data-cap="The people behind it"><img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=75" alt="Team collaborating" loading="lazy"><span>The people behind it</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ECOSYSTEM -->
+    <section class="ecosystem-section section-padding" id="ecosystem">
+      <div class="section-container">
+        <div class="section-heading centered reveal"><div class="eyebrow"><span class="eyebrow-dot"></span> OUR ECOSYSTEM</div><h2>One network. <span class="gradient-text">Many possibilities.</span></h2><p>Voltiva connects the people and infrastructure behind the electric mobility experience.</p></div>
+        <div class="ecosystem-map" id="ecosystemMap">
+          <svg class="ecosystem-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="50" y1="50" x2="24" y2="19"/><line x1="50" y1="50" x2="76" y2="19"/><line x1="50" y1="50" x2="24" y2="81"/><line x1="50" y1="50" x2="76" y2="81"/>
+          </svg>
+          <div class="ecosystem-center"><div class="ecosystem-core"><span><img src="/assets/images/lightening-svgrepo-com.svg"></span></div><strong>VOLTIVA</strong><small>CONNECTED MOBILITY</small></div>
+          <article class="ecosystem-node ecosystem-driver reveal reveal-left"><div class="ecosystem-node-icon"><img src="/assets/images/car-svgrepo-com.svg"> </div><strong>EV Drivers</strong><span>Simple charging journeys</span></article>
+          <article class="ecosystem-node ecosystem-fleet reveal reveal-right"><div class="ecosystem-node-icon"><img src="/assets/images/articulated-lorry-svgrepo-com.svg"> </div><strong>Fleets</strong><span>Smarter fleet charging</span></article>
+          <article class="ecosystem-node ecosystem-business reveal reveal-left"><div class="ecosystem-node-icon"><img src="/assets/images/business-woman-talking-remotely-svgrepo-com.svg"></div><strong>Businesses</strong><span>Charging infrastructure</span></article>
+          <article class="ecosystem-node ecosystem-partner reveal reveal-right"><div class="ecosystem-node-icon"><img src="/assets/images/partners-svgrepo-com.svg"></div><strong>Partners</strong><span>Build the network together</span></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CULTURE -->
+    <section class="culture-section section-padding" id="culture">
+      <div class="section-container"><div class="culture-panel reveal">
+        <div class="culture-content">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> THE VOLTIVA MINDSET</div>
+          <h2>Build boldly.<br><span class="gradient-text">Keep moving.</span></h2>
+          <p>We believe great mobility products are built by people who stay curious, question assumptions and care deeply about the details.</p>
+          <div class="culture-values"><span>Curiosity</span><span>Simplicity</span><span>Ownership</span><span>Impact</span></div>
+        </div>
+        <div class="culture-visual" aria-hidden="true">
+          <img class="culture-img" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1000&q=70" alt="" loading="lazy">
+          <div class="culture-grid"></div>
+          <div class="culture-circle circle-1"></div><div class="culture-circle circle-2"></div><div class="culture-circle circle-3"></div>
+          <!-- <div class="culture-bolt"></div> -->
+          <span class="culture-particle p1"></span><span class="culture-particle p2"></span><span class="culture-particle p3"></span><span class="culture-particle p4"></span>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="about-final-cta" id="aboutCta">
+      <div class="cta-bg"></div><div class="cta-grid"></div><div class="cta-glow"></div>
+      <div class="section-container">
+        <div class="cta-content reveal reveal-left">
+          <span class="cta-mini-icon"><img src="/assets/images/lightening-svgrepo-com.svg"></span>
+          <div class="eyebrow"><span class="eyebrow-dot"></span> THE ROAD AHEAD</div>
+          <h2>Ready to move with <span>Voltiva?</span></h2>
+          <p>Find your next charging point and experience a smarter way to power your journey.</p>
+          <div class="cta-actions">
+            <a href="stations.html" class="btn btn-primary magnetic-btn">Find a Station <span class="btn-arrow">→</span></a>
+            <a href="services.html" class="btn btn-ghost">Explore Services <span class="btn-arrow">→</span></a>
+          </div>
+        </div>
+        <div class="cta-energy-stream" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <a class="brand" href="../index.html"><span class="brand-mark"><span></span></span><span>voltiva<span class="brand-dot">.</span></span></a>
+      <p>Intelligent charging for a moving world.</p>
+      <div class="footer-links"><a href="about.html">About</a><a href="services.html">Services</a><a href="blog.html">Blog</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Voltiva. Portfolio project.</span><span>Designed for the road ahead ⚡</span></div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="lb-btn lb-close" aria-label="Close">✕</button>
+    <button class="lb-btn lb-prev" aria-label="Previous photo">‹</button>
+    <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+    <button class="lb-btn lb-next" aria-label="Next photo">›</button>
+  </div>
+
+  <button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="../assets/js/site.js"></script>
+  <script src="../assets/js/about.js"></script>
+</body>
+</html>

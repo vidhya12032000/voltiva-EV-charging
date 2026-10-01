@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Voltiva — find EV chargers, track your drive live and reserve a slot.">
+  <title>Voltiva — EV Charging, Reimagined</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Leaflet (integrity attributes removed: the old CSS hash was wrong and blocked the stylesheet, which broke the map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" type="image/x-icon" href="/assets/images/lightening-svgrepo-com.svg">
+</head>
+<body>
+  <div class="page-loader" id="pageLoader"><div class="loader-ring"></div><span>Powering up</span></div>
+  <div class="progress" id="progress"></div>
+
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="index.html" aria-label="Voltiva home"><img src="/assets/images/lightening-svgrepo-com.svg" width="40px" height="40px"></span></span><span>voltiva<span class="brand-dot">.</span></span></a>
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <a class="nav-link active" href="index.html">Home</a>
+      <a class="nav-link" href="pages/home2.html">Home 2</a>
+      <a class="nav-link" href="pages/about.html">About</a>
+      <a class="nav-link" href="pages/stations.html">Stations</a>
+      <a class="nav-link" href="pages/services.html">Services</a>
+      <a class="nav-link" href="pages/blog.html">Blog</a>
+      <a class="nav-link" href="pages/faq.html">FAQ</a>
+      <a class="nav-link" href="pages/contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☾</button>
+      <button class="rtl-btn" id="rtlToggle" aria-label="Toggle RTL" aria-pressed="false">RTL</button>
+      <button class="profile-btn" aria-label="Account"><span class="profile-avatar">V</span><span class="profile-label">Account</span></button>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=2200&q=80">
+        <source src="https://www.pexels.com/download/video/9788683/" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div><div class="hero-grid"></div>
+
+      <div class="hero-content reveal reveal-left">
+        <div class="eyebrow"><span class="pulse-dot"></span> The future of charging</div>
+        <h1>Charge smarter.<br><em>Drive farther.</em></h1>
+        <p class="hero-copy">Find nearby EV stations, see live charger availability, compare rates, track your drive and reserve a slot — all in one place.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#stations">Find a station <span>↗</span></a>
+          <a class="btn btn-ghost" href="#howItWorks">How it works <span class="play-icon">▶</span></a>
+        </div>
+        <div class="hero-trust">
+          <div class="avatar-stack"><span>R</span><span>A</span><span>M</span><span>+</span></div>
+          <div><strong>12,000+</strong><small>drivers charging smarter</small></div>
+        </div>
+      </div>
+
+      <div class="hero-orbit-card orbit-card-1 float"><span class="mini-icon">⚡</span><div><strong>60 kW</strong><small>Fast charging</small></div></div>
+      <div class="hero-orbit-card orbit-card-2 float-delayed"><span class="mini-icon green">●</span><div><strong>4 available</strong><small>Chargers nearby</small></div></div>
+      <div class="hero-orbit-card orbit-card-3 float-slow"><span class="mini-icon">₹</span><div><strong>₹18 / kWh</strong><small>Current rate</small></div></div>
+      <div class="scroll-cue"><span>Scroll</span><i></i></div>
+    </section>
+
+    <section class="live-strip" aria-label="Network status">
+      <div class="live-item"><span class="live-dot"></span><strong>Live network</strong></div>
+      <div class="ticker"><div class="ticker-track">
+        <span>24,820+ chargers connected</span><span>98.2% network uptime</span><span>6,420 stations worldwide</span><span>Green energy wherever possible</span>
+        <span>24,820+ chargers connected</span><span>98.2% network uptime</span><span>6,420 stations worldwide</span><span>Green energy wherever possible</span>
+      </div></div>
+    </section>
+
+    <section class="section intro-section" id="about">
+      <div class="section-kicker reveal">Why Voltiva</div>
+      <div class="intro-grid">
+        <h2 class="section-title reveal reveal-left">Your charge.<br><span>One intelligent</span><br>journey.</h2>
+        <div class="intro-copy reveal reveal-right">
+          <p>Voltiva brings discovery, availability, pricing and reservations together in one seamless charging experience.</p>
+          <a href="#services" class="text-link">Explore the platform <span>→</span></a>
+        </div>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card reveal reveal-left"><div class="feature-icon">⌖</div><h3>Find nearby</h3><p>Search stations around you with distance, connector and availability filters.</p></article>
+        <article class="feature-card feature-highlight reveal"><div class="feature-icon">◉</div><h3>See live status</h3><p>Know which charging points are free before you drive there.</p></article>
+        <article class="feature-card reveal reveal-right"><div class="feature-icon">↗</div><h3>Reserve ahead</h3><p>Choose a slot, confirm your booking and keep your journey predictable.</p></article>
+      </div>
+    </section>
+
+    <section class="section stations-section" id="stations">
+      <div class="section-heading-row reveal">
+        <div><div class="section-kicker">Nearby network</div><h2 class="section-title">Power is closer<br><span>than you think.</span></h2></div>
+        <a class="btn btn-outline" href="#stationsMap">Open full map ↗</a>
+      </div>
+
+      <div class="station-layout">
+        <div class="station-list reveal reveal-left">
+          <div class="search-box"><span>⌕</span><input id="stationSearch" type="search" placeholder="Search station, area or charger…" aria-label="Search stations"></div>
+          <div class="station-filter-row">
+            <button class="filter-chip active" data-filter="all">All</button>
+            <button class="filter-chip" data-filter="available">Available</button>
+            <button class="filter-chip" data-filter="fast">Fast charge</button>
+          </div>
+          <div class="station-scroll" id="stationScroll"></div>
+        </div>
+
+        <div class="map-wrap reveal reveal-right" id="stationsMap">
+          <div id="map" aria-label="Interactive EV charging station map"></div>
+          <div class="map-overlay-card"><span class="map-live">● Live</span><strong>Stations around you</strong><small>Tap a marker to view details</small></div>
+          <div class="map-tools">
+            <button class="tool-btn" id="locateBtn">◎ My location</button>
+            <button class="tool-btn" id="trackBtn">▶ Track my EV</button>
+          </div>
+          <div class="map-legend"><span><i class="legend-available"></i> Available</span><span><i class="legend-busy"></i> Busy</span><span><i class="legend-ev"></i> Your EV</span></div>
+          <div class="hud" id="hud" hidden>
+            <div class="hud-head"><strong id="hudDest">Heading to…</strong><button id="hudStop" aria-label="Stop tracking">✕</button></div>
+            <div class="hud-bar"><i id="hudBar"></i></div>
+            <div class="hud-grid">
+              <div><small>ETA</small><b id="hudEta">—</b></div>
+              <div><small>Distance</small><b id="hudDist">—</b></div>
+              <div><small>Speed</small><b id="hudSpeed">—</b></div>
+              <div><small>Battery</small><b id="hudBat">—</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section process-section" id="howItWorks">
+      <div class="section-kicker reveal">How it works</div>
+      <div class="process-heading">
+        <h2 class="section-title reveal reveal-left">From search to<br><span>full charge.</span></h2>
+        <p class="reveal reveal-right">Three simple steps between you and your next destination.</p>
+      </div>
+      <div class="steps">
+        <article class="step reveal reveal-left"><b>01</b><div class="step-visual">⌖</div><h3>Discover</h3><p>Find compatible charging stations near your route.</p></article>
+        <article class="step reveal"><b>02</b><div class="step-visual">▣</div><h3>Reserve</h3><p>Pick a charger and reserve a convenient charging slot.</p></article>
+        <article class="step reveal reveal-right"><b>03</b><div class="step-visual">⚡</div><h3>Charge</h3><p>Arrive, plug in and track your charging session.</p></article>
+      </div>
+    </section>
+
+    <section class="immersive-cta" id="home2">
+      <div class="cta-image"></div><div class="cta-overlay"></div>
+      <div class="cta-content reveal reveal-left">
+        <div class="section-kicker">Built for the road ahead</div>
+        <h2>More than a<br><em>charging stop.</em></h2>
+        <p>One connected experience for drivers, charging networks and the cities they move through.</p>
+        <a class="btn btn-primary" href="#contact">Discover Voltiva <span>↗</span></a>
+      </div>
+      <div class="cta-stat reveal reveal-right"><strong>98.2%</strong><span>network uptime</span><small>Designed for dependable journeys.</small></div>
+    </section>
+
+    <section class="section services-section" id="services">
+      <div class="section-heading-row reveal">
+        <div><div class="section-kicker">Services</div><h2 class="section-title">Everything your<br><span>EV journey needs.</span></h2></div>
+        <a href="#contact" class="text-link">View all services →</a>
+      </div>
+      <div class="services-grid">
+        <article class="service-card large reveal reveal-left"><div class="service-art"></div><div><h3>Smart charging</h3><p>Compatible charger discovery with live station intelligence.</p></div><a href="#contact">Explore ↗</a></article>
+        <article class="service-card reveal reveal-right"><div class="service-icon">◷</div><h3>Slot reservations</h3><p>Reserve charging time around your schedule.</p><a href="#contact">Explore ↗</a></article>
+        <article class="service-card reveal reveal-left"><div class="service-icon">₹</div><h3>Transparent pricing</h3><p>See charging rates before you arrive.</p><a href="#contact">Explore ↗</a></article>
+        <article class="service-card reveal reveal-right"><div class="service-icon">⌁</div><h3>Charging history</h3><p>Track sessions, usage and previous reservations.</p><a href="#contact">Explore ↗</a></article>
+      </div>
+    </section>
+
+    <section class="section blog-section" id="blog">
+      <div class="section-kicker reveal">From the blog</div>
+      <div class="blog-heading">
+        <h2 class="section-title reveal reveal-left">Ideas that move<br><span>the future.</span></h2>
+        <p class="reveal reveal-right">EV guides, charging tips and the technology shaping cleaner mobility.</p>
+      </div>
+      <div class="blog-grid">
+        <article class="blog-card reveal reveal-left"><div class="blog-image" style="background-image:url('https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1000&q=80')"></div><div class="blog-body"><span>EV guide · 5 min</span><h3>AC vs DC charging: what drivers need to know</h3><a href="#blog">Read article →</a></div></article>
+        <article class="blog-card reveal"><div class="blog-image" style="background-image:url('/assets/images/chargingstation.jpg')"></div><div class="blog-body"><span>Tech · 4 min</span><h3>Inside the connected charging station</h3><a href="#blog">Read article →</a></div></article>
+        <article class="blog-card reveal reveal-right"><div class="blog-image" style="background-image:url('/assets/images/networks.jpg')"></div><div class="blog-body"><span>Future · 6 min</span><h3>How smarter networks change urban mobility</h3><a href="#blog">Read article →</a></div></article>
+      </div>
+    </section>
+
+    <section class="section faq-section" id="faq">
+      <div class="faq-grid">
+        <div class="reveal reveal-left">
+          <div class="section-kicker">FAQ</div>
+          <h2 class="section-title">Questions,<br><span>answered.</span></h2>
+          <p class="faq-note">Can't find what you need? <a class="text-link" href="#contact">Talk to us →</a></p>
+        </div>
+        <div class="faq-list reveal reveal-right">
+          <div class="faq-item open"><button class="faq-q" aria-expanded="true">How do I find a charger near me?<i></i></button><div class="faq-a"><p>Use “My location” on the map. Voltiva shows the closest stations with connector type, speed and live availability.</p></div></div>
+          <div class="faq-item"><button class="faq-q" aria-expanded="false">Can I reserve a slot in advance?<i></i></button><div class="faq-a"><p>Yes. Open any available station, tap Reserve and pick a time. You'll get a confirmation straight away.</p></div></div>
+          <div class="faq-item"><button class="faq-q" aria-expanded="false">Which connectors are supported?<i></i></button><div class="faq-a"><p>CCS2 and Type 2 today. Filters let you see only stations that match your car.</p></div></div>
+          <div class="faq-item"><button class="faq-q" aria-expanded="false">How does live tracking work?<i></i></button><div class="faq-a"><p>Choose a station and tap Track. You see your route, ETA, speed and expected battery on arrival, updated as you drive.</p></div></div>
+          <div class="faq-item"><button class="faq-q" aria-expanded="false">How is charging priced?<i></i></button><div class="faq-a"><p>Per kWh, shown on each station card before you arrive. No hidden fees.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contact-section" id="contact">
+      <div class="contact-panel reveal">
+        <div><div class="section-kicker">Ready when you are</div><h2>Let's power<br><span>what's next.</span></h2></div>
+        <div><p>Build a smarter charging experience for your drivers, fleet or charging network.</p><a class="btn btn-primary" href="mailto:hello@voltiva.example">Talk to Voltiva ↗</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <a class="brand" href="#home"><span class="brand-mark"><span></span></span><span>voltiva<span class="brand-dot">.</span></span></a>
+      <p>Intelligent charging for a moving world.</p>
+      <div class="footer-links"><a href="#about">About</a><a href="#services">Services</a><a href="#blog">Blog</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Voltiva. Portfolio project.</span><span>Designed for the road ahead ⚡</span></div>
+  </footer>
+
+  <button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

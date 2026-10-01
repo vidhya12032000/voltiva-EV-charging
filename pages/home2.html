@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark light">
+  <title>VoltGrid — Smart EV Charging</title>
+  <meta name="description" content="Smart EV charging infrastructure for modern electric mobility.">
+  <!-- Apply saved theme + direction BEFORE first paint (no flash, theme always in sync) -->
+  <script>
+    try {
+      var d = document.documentElement;
+      d.dataset.theme = localStorage.getItem('vt-theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      d.dir = localStorage.getItem('vt-dir') || 'ltr';
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <!-- Relative paths: this file lives in /pages/ -->
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/home2.css">
+    <link rel="icon" type="image/x-icon" href="/assets/images/lightening-svgrepo-com.svg">
+</head>
+<body>
+  <div class="page-loader" id="pageLoader"><div class="loader-ring"></div><span>Powering the future</span></div>
+  <div class="progress" id="progress"></div>
+
+  <header class="site-header" id="siteHeader">
+    
+       <a class="brand" href="../index.html" aria-label="Voltiva home">
+    <img src="/assets/images/lightening-svgrepo-com.svg" width="40px" height="40px">
+</span></span><span>voltiva<span class="brand-dot">.</span></span></a>
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <a class="nav-link" href="../index.html">Home</a>
+      <a class="nav-link active" href="home2.html">Home 2</a>
+      <a class="nav-link" href="about.html">About</a>
+      <a class="nav-link" href="stations.html">Stations</a>
+      <a class="nav-link" href="services.html">Services</a>
+      <a class="nav-link" href="blog.html">Blog</a>
+      <a class="nav-link" href="faq.html">FAQ</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☾</button>
+      <button class="rtl-btn" id="rtlToggle" aria-label="Toggle RTL" aria-pressed="false">RTL</button>
+      <button class="profile-btn" aria-label="Account"><span class="profile-avatar">V</span><span class="profile-label">Account</span></button>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="h2-hero">
+      <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=2200&q=80">
+        <source src="https://www.pexels.com/download/video/4817952/" type="video/mp4">
+      </video>
+      <div class="h2-hero-bg"></div><div class="h2-hero-grid"></div>
+
+      <div class="h2-hero-content reveal reveal-left">
+        <div class="eyebrow"><span class="pulse-dot"></span> Smart EV Infrastructure</div>
+        <h1>Charge <em>smarter.</em><br>Drive <span>further.</span></h1>
+        <p class="h2-hero-copy">Intelligent charging infrastructure designed for electric vehicles, businesses and the cities of tomorrow.</p>
+        <div class="hero-actions">
+          <a href="#charging" class="btn btn-primary">Explore Charging <span>↗</span></a>
+          <a href="stations.html" class="btn btn-ghost">Find a Station <span>↗</span></a>
+        </div>
+        <div class="h2-hero-stats">
+          <div><strong data-counter="250">0</strong><span>+</span><small>Charging Points</small></div>
+          <div><strong data-counter="98">0</strong><span>%</span><small>Network Uptime</small></div>
+          <div><strong data-counter="42">0</strong><span>K</span><small>EV Sessions</small></div>
+        </div>
+      </div>
+
+      <div class="h2-dashboard-card float">
+        <div class="dashboard-top"><div><small>Live network</small><strong>Charging Status</strong></div><span class="live-badge">● LIVE</span></div>
+        <div class="charging-ring"><div class="charging-ring-inner"><strong>78%</strong><small>Network</small></div></div>
+        <div class="dashboard-data"><div><span>Available</span><b>142</b></div><div><span>Charging</span><b>86</b></div><div><span>Offline</span><b>12</b></div></div>
+      </div>
+      <div class="energy-card float-delayed"><div class="energy-icon">⚡</div><div><small>Energy Delivered</small><strong>2.8 GWh</strong></div></div>
+    </section>
+
+    <section class="h2-trust">
+      <div class="trust-label">Built for modern mobility</div>
+      <div class="trust-items"><span>EV FLEETS</span><span>BUSINESSES</span><span>HIGHWAYS</span><span>SMART CITIES</span><span>RESIDENTIAL</span></div>
+    </section>
+
+    <!-- INTRO -->
+    <section class="section" id="charging">
+      <div class="h2-intro">
+        <div class="reveal reveal-left"><span class="section-kicker">EV Intelligence</span><h2 class="section-title">One platform for <span>every charging need.</span></h2></div>
+        <p class="reveal reveal-right">From individual drivers to large-scale EV fleets, VoltGrid brings charging, energy management and operational intelligence together in one platform.</p>
+      </div>
+      <div class="h2-usecases">
+        <article class="usecase-card reveal reveal-left"><div class="usecase-icon">🚗</div><h3>EV Drivers</h3><p>Discover nearby charging stations, check live availability and reserve your preferred connector.</p><a href="stations.html" class="text-link">Find a charger <span>↗</span></a></article>
+        <article class="usecase-card featured reveal"><div class="usecase-icon">🚚</div><h3>Fleet Operations</h3><p>Monitor fleet charging sessions, optimize routes and keep every vehicle ready for its next journey.</p><a href="services.html" class="text-link">Explore fleet tools <span>↗</span></a></article>
+        <article class="usecase-card reveal reveal-right"><div class="usecase-icon">🏢</div><h3>Businesses</h3><p>Manage workplace and commercial charging with real-time usage insights and energy analytics.</p><a href="contact.html" class="text-link">Build your network <span>↗</span></a></article>
+      </div>
+    </section>
+
+    <!-- LIVE EV SCENE (animated by home2.js) -->
+    <section class="ev-scene" id="evScene" aria-hidden="true">
+      <div class="sc-stage">
+        <div class="sc-sky"></div><div class="sc-sun"></div>
+        <div class="sc-layer sc-far"></div><div class="sc-layer sc-mid"></div>
+        <div class="sc-ground"></div>
+        <div class="sc-station" id="scStation"><div class="cs-head"><i></i><em></em></div><div class="cs-pole"></div><div class="cs-foot"></div><div class="cs-cable"></div></div>
+        <div class="sc-road"></div>
+        <div class="sc-car" id="scCar">
+          <svg class="ev" viewBox="0 0 250 90" width="250" height="90" style="overflow:visible">
+            <defs>
+              <linearGradient id="evBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--car1)"/><stop offset="1" style="stop-color:var(--car2)"/></linearGradient>
+              <linearGradient id="evGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9f4ff"/><stop offset="1" stop-color="#3b6c85"/></linearGradient>
+              <linearGradient id="evBeam" x1="0" x2="1"><stop offset="0" stop-color="#fff6b0" stop-opacity=".6"/><stop offset="1" stop-color="#fff6b0" stop-opacity="0"/></linearGradient>
+            </defs>
+            <ellipse cx="126" cy="79" rx="112" ry="5" fill="#000" opacity=".3"/>
+            <polygon class="beam" points="238,54 400,30 400,86 238,62" fill="url(#evBeam)"/>
+            <path d="M10 62V54Q10 46 24 44L62 38Q78 20 104 18H150Q176 20 192 38L226 44Q242 48 242 58V62Q242 66 238 66H14Q10 66 10 62Z" fill="url(#evBody)"/>
+            <path d="M74 38Q86 24 106 22H124V38Z M130 22H150Q170 24 184 38H130Z" fill="url(#evGlass)"/>
+            <path d="M22 49H228" stroke="#fff" stroke-opacity=".35" stroke-width="1.2" fill="none"/>
+            <path d="M124 22V50" stroke="#06150c" stroke-opacity=".35" stroke-width="1.5"/>
+            <circle cx="62" cy="64" r="19" fill="#050c08"/><circle cx="190" cy="64" r="19" fill="#050c08"/>
+            <path class="head" d="M230 50L241 52V56L232 55Z" fill="#fff"/>
+            <rect class="tail" x="10" y="50" width="6" height="5" rx="2" fill="#ff4d4d"/>
+            <circle class="port" cx="214" cy="47" r="3" fill="#b6f035"/>
+            <g class="wheel" data-cx="62"><circle cx="62" cy="64" r="14" fill="#0b130f"/><circle cx="62" cy="64" r="9" fill="#b9c6be"/><path d="M62 55V73M53 64H71M55.6 57.6L68.4 70.4M68.4 57.6L55.6 70.4" stroke="#0b130f" stroke-width="2"/><circle cx="62" cy="64" r="2.5" fill="#0b130f"/></g>
+            <g class="wheel" data-cx="190"><circle cx="190" cy="64" r="14" fill="#0b130f"/><circle cx="190" cy="64" r="9" fill="#b9c6be"/><path d="M190 55V73M181 64H199M183.6 57.6L196.4 70.4M196.4 57.6L183.6 70.4" stroke="#0b130f" stroke-width="2"/><circle cx="190" cy="64" r="2.5" fill="#0b130f"/></g>
+          </svg>
+        </div>
+      </div>
+      <div class="sc-hud">
+        <div class="sc-hud-top"><b id="scState">Cruising</b><span id="scSpeed">0 km/h</span></div>
+        <div class="sc-bat"><i id="scBar"></i></div>
+        <small><span id="scPct">22%</span> battery</small>
+      </div>
+    </section>
+
+    <!-- SMART CHARGING -->
+    <section class="h2-smart-section">
+      <div class="section h2-smart">
+        <div class="h2-smart-content reveal reveal-left">
+          <span class="section-kicker">Intelligent Charging</span>
+          <h2 class="section-title">Your charger <span>thinks ahead.</span></h2>
+          <p>Smart charging automatically balances energy demand, charger availability and charging priorities to create a more efficient EV ecosystem.</p>
+          <div class="smart-features">
+            <div class="smart-feature"><span>01</span><div><h3>Dynamic Load Management</h3><p>Distribute available power intelligently across multiple charging sessions.</p></div></div>
+            <div class="smart-feature"><span>02</span><div><h3>Peak Demand Optimization</h3><p>Reduce unnecessary energy costs by adjusting charging schedules automatically.</p></div></div>
+            <div class="smart-feature"><span>03</span><div><h3>Real-Time Monitoring</h3><p>Track charger status, energy consumption and active sessions from one dashboard.</p></div></div>
+          </div>
+        </div>
+        <div class="smart-visual reveal reveal-right">
+          <div class="smart-stage">
+            <div class="smart-orbit orbit-one"></div><div class="smart-orbit orbit-two"></div>
+            <div class="smart-core"><img class="core-bolt" src='/assets/images/car-svgrepo-com.svg'><strong>SMART</strong><small>ENERGY ENGINE</small></div>
+            <div class="smart-floating sf-one"><span>Power</span><b>142 kW</b></div>
+            <div class="smart-floating sf-two"><span>Efficiency</span><b>94.8%</b></div>
+            <div class="smart-floating sf-three"><span>CO₂ Saved</span><b>28.4 T</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHARGING TYPES -->
+    <section class="section">
+      <div class="section-heading-row reveal"><div><span class="section-kicker">Charging Solutions</span><h2 class="section-title">Choose your <span>charging speed.</span></h2></div><p class="intro-copy">Flexible charging infrastructure for every journey.</p></div>
+      <div class="charging-types">
+        <article class="charging-type reveal reveal-left"><div class="charging-type-top"><span>01</span><img src="../assets/images/charging-svgrepo-com.svg" width="50px" height="50px"></div><h3>AC Charging</h3><strong>7 — 22 kW</strong><p>Perfect for homes, offices, apartments and overnight charging.</p><div class="charge-bar"><i style="width:35%"></i></div><small>Everyday charging</small></article>
+        <article class="charging-type active reveal"><div class="charging-type-top"><span>02</span><img src="../assets/images/electric-car-svgrepo-com.svg" width="50px" height="50px"></div><h3>DC Fast Charging</h3><strong>60 — 180 kW</strong><p>High-speed charging for highways, fleets and busy commercial locations.</p><div class="charge-bar"><i style="width:72%"></i></div><small>Fast &amp; efficient</small></article>
+        <article class="charging-type reveal reveal-right"><div class="charging-type-top"><span>03</span><img src="../assets/images/lightening-svgrepo-com.svg" width="50px" height="50px"></div><h3>Ultra Fast</h3><strong>250+ kW</strong><p>Next-generation charging built for long-distance electric mobility.</p><div class="charge-bar"><i style="width:96%"></i></div><small>Future ready</small></article>
+      </div>
+    </section>
+
+    <!-- NETWORK (real map) -->
+    <section class="section h2-network">
+      <div class="network-header reveal">
+        <div><span class="section-kicker">Network Intelligence</span><h2 class="section-title">Everything connected. <span>Everything visible.</span></h2></div>
+        <span class="network-status"><i></i> Network operational</span>
+      </div>
+      <div class="network-dashboard reveal">
+        <div class="network-map">
+          <div id="netMap" aria-label="Live charging network map of Chennai"></div>
+          <div class="network-map-label"><small>LIVE NETWORK</small><strong>CHENNAI</strong></div>
+          <div class="net-legend"><span><i class="free"></i>Available</span><span><i class="charging"></i>Charging</span><span><i class="offline"></i>Offline</span><span><i class="ev"></i>EV</span></div>
+          <div class="net-feed"><small>Live activity</small><ul id="netFeed"></ul></div>
+        </div>
+        <div class="network-metrics">
+          <div class="metric-box"><small>Active Stations</small><strong id="mStations">238</strong><span class="positive">+12.4%</span></div>
+          <div class="metric-box"><small>Current Sessions</small><strong id="mSessions">486</strong><span class="positive">+8.2%</span></div>
+          <div class="metric-box"><small>Energy Today</small><strong id="mEnergy">84.6 MWh</strong><span class="positive">+16.8%</span></div>
+          <div class="metric-box"><small>CO₂ Avoided</small><strong id="mCo2">28.4 T</strong><span class="positive">+21.3%</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="section">
+      <div class="section-heading-row reveal"><div><span class="section-kicker">Simple by design</span><h2 class="section-title">Charge in <span>three steps.</span></h2></div></div>
+      <div class="h2-process">
+        <div class="process-item reveal reveal-left"><span>01</span><div class="process-icon">📍</div><h3>Find</h3><p>Locate a compatible charger using the live charging network.</p></div>
+        <div class="process-line"></div>
+        <div class="process-item reveal"><span>02</span><div class="process-icon">📲</div><h3>Connect</h3><p>Reserve your connector and start your charging session from the platform.</p></div>
+        <div class="process-line"></div>
+        <div class="process-item reveal reveal-right"><span>03</span><div class="process-icon">⚡</div><h3>Charge</h3><p>Monitor energy delivery and receive updates until your vehicle is ready.</p></div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="h2-cta">
+      <div class="h2-cta-bg"></div>
+      <div class="h2-cta-content reveal reveal-left">
+        <span class="section-kicker">Power your next move</span>
+        <h2>Ready to build a <em>smarter</em> charging network?</h2>
+        <p>Whether you're an EV driver, fleet operator or business, VoltGrid gives you the tools to move electric mobility forward.</p>
+        <div class="hero-actions"><a href="contact.html" class="btn btn-primary">Get Started <span>↗</span></a><a href="stations.html" class="btn btn-ghost">Explore Stations <span>↗</span></a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <a class="brand" href="../index.html"><span class="brand-mark"><span></span></span><span>voltiva<span class="brand-dot">.</span></span></a>
+      <p>Intelligent charging for a moving world.</p>
+      <div class="footer-links"><a href="about.html">About</a><a href="services.html">Services</a><a href="blog.html">Blog</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Voltiva. Portfolio project.</span><span>Designed for the road ahead ⚡</span></div>
+  </footer>
+
+  <button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="../assets/js/site.js"></script>
+  <script src="../assets/js/home2.js"></script>
+</body>
+</html>

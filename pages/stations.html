@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Charging Stations | Voltiva</title>
+
+  <meta
+    name="description"
+    content="Find fast, reliable and intelligent EV charging stations with Voltiva."
+  >
+
+  <script>document.documentElement.classList.add("js");</script>
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- Stations Page CSS -->
+  <link rel="stylesheet" href="../assets/css/stations.css">
+</head>
+
+<body class="stations-page">
+
+  <!-- =====================================================
+       SHARED SVG SPRITE (station art + mini car)
+  ====================================================== -->
+  <svg class="sv-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="sky-day" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2d86d6"/><stop offset="1" stop-color="#c4ecff"/>
+      </linearGradient>
+      <linearGradient id="sky-dusk" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2a1b52"/><stop offset=".6" stop-color="#c2527a"/><stop offset="1" stop-color="#ff9a5c"/>
+      </linearGradient>
+      <linearGradient id="sky-night" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#050b1a"/><stop offset="1" stop-color="#14405a"/>
+      </linearGradient>
+      <linearGradient id="sky-dawn" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#1e3a6e"/><stop offset=".65" stop-color="#7b6fb0"/><stop offset="1" stop-color="#ffc27a"/>
+      </linearGradient>
+      <linearGradient id="sky-forest" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0f3b2e"/><stop offset="1" stop-color="#8fe0ad"/>
+      </linearGradient>
+      <linearGradient id="sv-beam" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#e9ffb0" stop-opacity=".34"/><stop offset="1" stop-color="#e9ffb0" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="sv-pylon" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#34483f"/><stop offset="1" stop-color="#101a15"/>
+      </linearGradient>
+      <pattern id="sv-solar" width="12" height="7" patternUnits="userSpaceOnUse">
+        <rect width="12" height="7" fill="#15304d"/>
+        <path d="M0 .5H12M6 0V7" stroke="#59b0ff" stroke-opacity=".5" stroke-width=".8"/>
+      </pattern>
+
+      <symbol id="sv-car" viewBox="0 0 120 42">
+        <path d="M4 31C4 26 8 24 16 22L30 19C38 10 50 7 62 7C76 7 88 11 96 19L110 22C116 24 118 27 118 32V33H4Z" fill="currentColor"/>
+        <path d="M34 19C40 12 50 10 60 10V19ZM64 10C76 10 84 14 91 19H64Z" fill="#0b1a26" opacity=".85"/>
+        <circle cx="30" cy="33" r="9" fill="#0a0f0d"/><circle cx="30" cy="33" r="4" fill="#9fb0a8"/>
+        <circle cx="92" cy="33" r="9" fill="#0a0f0d"/><circle cx="92" cy="33" r="4" fill="#9fb0a8"/>
+        <rect x="109" y="25" width="7" height="2.4" rx="1.2" fill="#fffbd0"/>
+      </symbol>
+    </defs>
+  </svg>
+
+
+  <!-- =====================================================
+       PAGE LOADER
+  ====================================================== -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-orbit">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <p>Finding charging network...</p>
+  </div>
+
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+  <header class="site-header" id="siteHeader">
+
+   <a class="brand" href="../index.html" aria-label="Voltiva home">
+    <img src="/assets/images/lightening-svgrepo-com.svg" width="40px" height="40px">
+</span></span><span>voltiva<span class="brand-dot">.</span></span></a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <a class="nav-link" href="../index.html">Home</a>
+      <a class="nav-link" href="home2.html">Home 2</a>
+      <a class="nav-link" href="about.html">About</a>
+      <a class="nav-link active" href="stations.html" aria-current="page">Stations</a>
+      <a class="nav-link" href="services.html">Services</a>
+      <a class="nav-link" href="blog.html">Blog</a>
+      <a class="nav-link" href="faq.html">FAQ</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☾</button>
+      <button class="rtl-btn" id="rtlToggle" aria-label="Toggle RTL" aria-pressed="false">RTL</button>
+      <button class="profile-btn" aria-label="Account">
+        <span class="profile-avatar">V</span>
+        <span class="profile-label">Account</span>
+      </button>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+  </header>
+
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+  <main>
+
+    <!-- ===================================================
+         HERO
+    ==================================================== -->
+    <section class="stations-hero">
+        <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=2200&q=80">
+        <source src="https://www.pexels.com/download/video/3978374/" type="video/mp4">
+      </video>
+
+      <div class="stations-hero-bg"></div>
+      <div class="stations-grid"></div>
+
+      <div class="stations-hero-content">
+
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          VOLTIVA CHARGING NETWORK
+        </div>
+
+        <h1>
+          Charge
+          <span>without</span>
+          the detour.
+        </h1>
+
+        <p>
+          Discover nearby charging stations, check live
+          availability and get back on the road faster.
+        </p>
+
+        <!-- Search -->
+        <div class="station-search">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input
+            type="search"
+            id="stationSearch"
+            placeholder="Search station, area, connector or amenity..."
+            autocomplete="off"
+            aria-label="Search charging stations"
+          >
+          <button id="locateBtn" class="location-btn" type="button">
+            <span aria-hidden="true">◎</span>
+            Near me
+          </button>
+        </div>
+
+        <!-- Quick filters -->
+        <div class="hero-filters" role="group" aria-label="Quick filters">
+          <button class="quick-filter active" data-filter="all" type="button" aria-pressed="true">All stations</button>
+          <button class="quick-filter" data-filter="available" type="button" aria-pressed="false">Available</button>
+          <button class="quick-filter" data-filter="fast" type="button" aria-pressed="false">Fast charging</button>
+          <button class="quick-filter" data-filter="saved" type="button" aria-pressed="false">♥ Saved</button>
+        </div>
+
+      </div>
+
+      <!-- Animated charging scene (built by JS): car rolls in, plugs in, charges -->
+      <div class="hero-scene" id="heroScene" aria-hidden="true"></div>
+
+    </section>
+
+
+    <!-- ===================================================
+         NETWORK STATS
+    ==================================================== -->
+    <section class="network-stats" aria-label="Network statistics">
+
+      <div class="network-stat">
+        <div class="stat-icon" aria-hidden="true">⚡</div>
+        <div><strong data-count="128">0</strong><span>Stations</span></div>
+      </div>
+
+      <div class="network-stat">
+        <div class="stat-icon" aria-hidden="true">◉</div>
+        <div><strong data-count="486">0</strong><span>Charging points</span></div>
+      </div>
+
+      <div class="network-stat">
+        <div class="stat-icon" aria-hidden="true">↯</div>
+        <div><strong data-count="74">0</strong><span>Fast chargers</span></div>
+      </div>
+
+      <div class="network-stat">
+        <div class="stat-icon" aria-hidden="true">◌</div>
+        <div><strong data-count="99">0</strong><span>Network uptime %</span></div>
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         FIND STATIONS
+    ==================================================== -->
+    <section class="stations-section" id="findStations">
+
+      <div class="section-heading">
+
+        <div>
+          <span class="section-kicker">EXPLORE THE NETWORK</span>
+          <h2>Find your <span>next charge.</span></h2>
+          <p>Filter the network by availability, charging speed and connector type. Bay counts update live.</p>
+        </div>
+
+        <div class="view-switcher" role="group" aria-label="Switch view">
+          <button class="view-btn active" id="cardViewBtn" type="button" aria-label="Card view" aria-pressed="true" title="Card view">▦</button>
+          <button class="view-btn" id="mapViewBtn" type="button" aria-label="Map view" aria-pressed="false" title="Map view">◫</button>
+        </div>
+
+      </div>
+
+
+      <!-- FILTER BAR -->
+      <div class="advanced-filters">
+
+        <div class="filter-group">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter">
+            <option value="all">All</option>
+            <option value="available">Available</option>
+            <option value="busy">Busy</option>
+            <option value="offline">Offline</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="chargerFilter">Charger</label>
+          <select id="chargerFilter">
+            <option value="all">All chargers</option>
+            <option value="fast">Fast charging</option>
+            <option value="standard">Standard</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="connectorFilter">Connector</label>
+          <select id="connectorFilter">
+            <option value="all">All connectors</option>
+            <option value="CCS2">CCS2</option>
+            <option value="Type 2">Type 2</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="sortFilter">Sort by</label>
+          <select id="sortFilter">
+            <option value="recommended">Recommended</option>
+            <option value="nearest">Nearest</option>
+            <option value="cheapest">Lowest price</option>
+            <option value="fastest">Fastest charger</option>
+            <option value="free">Most free bays</option>
+          </select>
+        </div>
+
+        <button class="clear-filters" id="clearFilters" type="button">Reset filters</button>
+
+      </div>
+
+
+      <!-- RESULTS -->
+      <div class="station-layout card-mode">
+
+        <div class="station-results-wrap">
+          <p class="result-count" id="resultCount" aria-live="polite"></p>
+          <div class="station-results" id="stationResults"><!-- JS renders cards --></div>
+        </div>
+
+        <!-- Map -->
+        <div class="station-map" id="stationMap">
+
+          <div class="map-grid"></div>
+          <div class="map-road road-one"></div>
+          <div class="map-road road-two"></div>
+          <div class="map-road road-three"></div>
+          <div class="map-road road-four"></div>
+
+          <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path
+              id="mapRoute"
+              class="map-route-path"
+              d="M20 57 C24 44 26 38 32 35 S52 24 62 26 S80 34 82 44 S84 66 80 76 S58 70 50 60 S28 78 36 81"
+            />
+          </svg>
+
+          <div class="map-car" id="mapCar" aria-hidden="true"></div>
+
+          <div id="mapNodes"><!-- JS renders nodes + labels --></div>
+
+          <div class="map-pop" id="mapPop" hidden></div>
+
+          <div class="map-live">
+            <span class="live-dot"></span>
+            Live network
+          </div>
+
+          <div class="map-compass" aria-hidden="true">N</div>
+
+        </div>
+
+      </div>
+
+
+      <!-- No results -->
+      <div class="no-results" id="noResults" hidden>
+        <div class="no-results-icon" aria-hidden="true">⌕</div>
+        <h3>No charging stations found</h3>
+        <p>Try changing your filters or search for another area.</p>
+        <button id="resetSearch" class="primary-btn" type="button">Show all stations</button>
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         SCROLL JOURNEY — the car drives as you scroll
+    ==================================================== -->
+    <section class="journey" id="journey" aria-labelledby="journeyTitle">
+
+      <div class="journey-pin">
+
+        <div class="journey-copy">
+          <span class="section-kicker">ONE TRIP, START TO FINISH</span>
+          <h2 id="journeyTitle">Scroll to <span>drive.</span></h2>
+          <p>
+            Your scroll is the accelerator. Follow one trip from a low battery
+            to a Voltiva station, a fast charge and the road beyond.
+          </p>
+        </div>
+
+        <div class="journey-stage" id="journeyStage">
+
+          <svg
+            id="journeySvg"
+            class="journey-svg"
+            viewBox="0 0 1200 520"
+            preserveAspectRatio="xMidYMid slice"
+            role="img"
+            aria-label="An electric car drives through Chennai at dusk, charges at a Voltiva station overnight and drives on to the beach at sunrise"
+          ></svg>
+
+          <div class="journey-hud" aria-live="off">
+            <div class="hud-battery">
+              <div class="hud-bar"><span id="hudFill"></span></div>
+              <strong id="hudPct">100%</strong>
+            </div>
+            <div class="hud-row"><span>Range</span><strong id="hudRange">420 km</strong></div>
+            <div class="hud-row"><span>Power</span><strong id="hudPower">0 kW</strong></div>
+            <div class="hud-status" id="hudStatus">Cruising</div>
+          </div>
+
+        </div>
+
+        <ol class="journey-steps" id="journeySteps">
+          <li class="active"><span>01</span> Battery runs low</li>
+          <li><span>02</span> Arrive at Voltiva</li>
+          <li><span>03</span> Plug in &amp; fast charge</li>
+          <li><span>04</span> Back on the road</li>
+        </ol>
+
+        <div class="journey-progress" aria-hidden="true"><span id="journeyBar"></span></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         HOW IT WORKS
+    ==================================================== -->
+    <section class="station-process">
+
+      <div class="section-heading centered">
+        <span class="section-kicker">SIMPLE BY DESIGN</span>
+        <h2>From search to <span>charge.</span></h2>
+        <p>Everything you need to find and use a Voltiva station.</p>
+      </div>
+
+      <div class="process-grid">
+
+        <article class="process-card">
+          <div class="process-number">01</div>
+          <div class="process-icon" aria-hidden="true">⌕</div>
+          <h3>Find a station</h3>
+          <p>Search nearby locations and discover chargers available for your vehicle.</p>
+        </article>
+
+        <article class="process-card">
+          <div class="process-number">02</div>
+          <div class="process-icon" aria-hidden="true">◉</div>
+          <h3>Check availability</h3>
+          <p>See live connector status, charging speed and estimated pricing before you arrive.</p>
+        </article>
+
+        <article class="process-card">
+          <div class="process-number">03</div>
+          <div class="process-icon" aria-hidden="true">⚡</div>
+          <h3>Plug &amp; charge</h3>
+          <p>Connect your EV and let Voltiva intelligently manage the charging session.</p>
+        </article>
+
+        <article class="process-card">
+          <div class="process-number">04</div>
+          <div class="process-icon" aria-hidden="true">↗</div>
+          <h3>Get moving</h3>
+          <p>Track your session, receive updates and continue your journey with confidence.</p>
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         CTA
+    ==================================================== -->
+    <section class="stations-cta" id="ctaSection">
+
+      <div class="cta-glow"></div>
+
+      <div class="cta-content">
+        <span class="section-kicker">READY WHEN YOU ARE</span>
+        <h2>Your next <span>charge</span> is closer than you think.</h2>
+        <p>Explore the Voltiva network and keep your journey moving.</p>
+        <a href="#findStations" class="primary-btn magnetic-btn">
+          Explore stations
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <!-- Car drives in and docks as the section scrolls into view -->
+      <div class="cta-road" aria-hidden="true">
+        <div class="cta-car" id="ctaCar"></div>
+        <div class="cta-dock"><i></i></div>
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =====================================================
+       FOOTER
+  ====================================================== -->
+  <footer class="site-footer">
+
+    <div class="footer-top">
+
+      <a class="brand" href="../index.html">
+        <span class="brand-mark"><span></span></span>
+        <span>voltiva<span class="brand-dot">.</span></span>
+      </a>
+
+      <p>Intelligent charging for a moving world.</p>
+
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Voltiva. Portfolio project.</span>
+      <span>Designed for the road ahead ⚡</span>
+    </div>
+
+  </footer>
+
+
+  <!-- Reservation dialog -->
+  <dialog class="reserve-dialog" id="reserveDialog" aria-labelledby="reserveTitle">
+    <button class="dialog-close" id="dialogClose" type="button" aria-label="Close">✕</button>
+    <div id="reserveBody"></div>
+  </dialog>
+
+  <!-- Scroll progress road: a tiny car drives along the bottom as you scroll -->
+  <div class="scroll-road" id="scrollRoad" aria-hidden="true">
+    <div class="scroll-road-fill" id="roadFill"></div>
+    <div class="scroll-road-car" id="roadCar"></div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Back to top -->
+  <button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+
+
+  <!-- JavaScript -->
+  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/stations.js"></script>
+
+</body>
+</html>
