@@ -483,6 +483,7 @@ html.dialog-open { overflow: hidden; }
   grid-template-columns: minmax(0, 1.05fr) minmax(380px, .95fr);
   gap: 25px;
   align-items: start;
+  
 }
 
 .station-results {
@@ -1461,4 +1462,227 @@ html.dialog-open { overflow: hidden; }
 
   .hs-cable { stroke-dashoffset: 0; }
   .hs-cable-flow { opacity: 1; }
+}
+
+/* =========================
+   MOBILE MENU FIX
+========================= */
+
+#menuBtn {
+  display: none;
+}
+
+@media (max-width: 900px) {
+
+  #menuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line, rgba(255,255,255,.12));
+    border-radius: 12px;
+    background: var(--card, rgba(255,255,255,.06));
+    color: inherit;
+    cursor: pointer;
+    font-size: 22px;
+    z-index: 1001;
+  }
+
+  #mainNav {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 16px;
+    right: 16px;
+
+    display: none;
+
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+
+    padding: 14px;
+
+    border: 1px solid var(--line, rgba(255,255,255,.12));
+    border-radius: 18px;
+
+    background: var(
+      --nav-bg,
+      rgba(10, 20, 24, .97)
+    );
+
+    box-shadow:
+      0 20px 50px rgba(0,0,0,.25);
+
+    z-index: 1000;
+  }
+
+  #mainNav.open {
+    display: flex;
+  }
+
+  #mainNav .nav-link {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+
+  #mainNav .nav-link:hover,
+  #mainNav .nav-link:focus-visible {
+    background: rgba(25, 211, 197, .10);
+  }
+}
+
+
+/* =========================================================
+   VOLTIVA — STATIONS PAGE: FIXES + FULL RESPONSIVE PASS
+   Paste at the very END of stations.css (after the mobile-menu block).
+========================================================= */
+
+/* ---------- 1. BUG: overflow-x:hidden on <body> can turn body into a
+   scroll container and silently break every `position: sticky`
+   (the scroll-journey pin and the sticky map). `clip` hides the
+   overflow without creating a scroll container. ---------- */
+.stations-page { overflow-x: clip; }
+
+
+/* ---------- 2. BUG: .hero-video had no styles, so the <video> sat in the
+   hero's flex row as a normal item and pushed the content around. ---------- */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  z-index: -4;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .28;
+  pointer-events: none;
+}
+[data-theme="light"] .hero-video { opacity: .14; }
+
+
+/* ---------- 3. BUG: hamburger lines were laid out in a row.
+   #menuBtn is display:flex, so its three <span>s sat side by side. ---------- */
+#menuBtn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+@media (max-width: 900px) {
+  #menuBtn { flex-direction: column; gap: 5px; }
+  #mainNav {
+    max-height: calc(100vh - 110px);
+    max-height: calc(100dvh - 110px);
+    overflow-y: auto;
+  }
+}
+
+
+/* ---------- 4. Header: stop the action buttons overflowing on phones ---------- */
+.header-actions { gap: clamp(6px, 1.5vw, 12px); }
+
+@media (max-width: 640px) {
+  .profile-label { display: none; }
+  .brand > span { font-size: 1.1rem; }
+}
+@media (max-width: 380px) {
+  .brand img { width: 30px; height: 30px; }
+  .rtl-btn { padding-inline: 8px; }
+}
+
+
+/* ---------- 5. Ultra-wide screens: keep content in a readable column ---------- */
+@media (min-width: 701px) {
+  .stations-hero,
+  .stations-section,
+  .station-process {
+    padding-inline: max(7vw, calc((100vw - 1360px) / 2));
+  }
+  .stations-cta { margin-inline: max(7vw, calc((100vw - 1360px) / 2)); }
+  .hero-scene { right: max(3vw, calc((100vw - 1360px) / 2)); }
+  [dir="rtl"] .hero-scene { right: auto; left: max(3vw, calc((100vw - 1360px) / 2)); }
+}
+
+
+/* ---------- 6. Cards: fluid columns instead of a fixed 2 ---------- */
+.station-results {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+}
+.station-card { container-type: inline-size; }
+@container (max-width: 270px) {
+  .station-details { grid-template-columns: repeat(2, 1fr); }
+  .station-bottom { flex-wrap: wrap; }
+}
+
+.filter-group { flex: 1 1 150px; }
+@media (max-width: 700px) {
+  .filter-group { flex-basis: 100%; }
+}
+
+
+/* ---------- 7. Scroll journey ---------- */
+/* 100vh is taller than the visible area on mobile browsers */
+.journey-pin { height: 100vh; height: 100svh; }
+
+/* Short landscape screens (phones turned sideways, small laptops) */
+@media (max-height: 560px) {
+  .journey-pin { padding-top: 64px; padding-bottom: 12px; gap: 8px; }
+  .journey-copy .section-kicker,
+  .journey-copy p { display: none; }
+  .journey-copy h2 { margin: 0; font-size: 1.5rem; }
+  .journey-stage { height: clamp(160px, 48svh, 300px); }
+  .journey-steps { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .journey-steps li { padding: 6px 8px; font-size: .7rem; }
+  .journey-hud { width: 150px; padding: 8px 10px; }
+  .hud-row { display: none; }
+}
+
+@media (max-width: 480px) {
+  .journey-stage { border-radius: 20px; }
+  .journey-hud { width: 124px; gap: 6px; padding: 8px 10px; }
+  .hud-row { display: none; }
+  .hud-battery strong { font-size: 1.05rem; }
+  .journey-steps { gap: 6px; }
+  .journey-steps li { padding: 7px 8px; gap: 6px; font-size: .68rem; }
+}
+
+/* Portrait phones: show the whole scene (paired with the small script in the HTML) */
+@media (max-width: 700px) and (orientation: portrait) {
+  .journey-stage { height: auto; aspect-ratio: 1200 / 560; }
+}
+
+
+/* ---------- 8. Touch devices: bigger tap targets ---------- */
+@media (pointer: coarse) {
+  .save-btn { width: 44px; height: 44px; }
+  .map-node { width: 40px; height: 40px; }
+  .quick-filter,
+  .slot-btn { min-height: 44px; }
+  .reserve-btn { min-height: 44px; }
+}
+
+
+/* ---------- 9. Dialog + safe areas ---------- */
+.reserve-dialog { max-height: calc(100dvh - 28px); }
+.stations-page .back-top { bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
+
+
+/* ---------- 10. RTL leftovers ---------- */
+.location-btn span { margin-right: 0; margin-inline-end: 4px; }
+
+@media (max-width: 900px) {
+  [dir="rtl"] .network-stat:nth-child(2) { border-left: 0; }
+}
+@media (max-width: 480px) {
+  [dir="rtl"] .network-stat { border-left: 0; }
+}
+
+
+/* ---------- 11. Motion preferences ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-video { display: none; }
 }

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Nestora</title>
+
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+     <link rel="stylesheet" href="/assets/css/profile.css">
+ 
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="login-header">
+
+        <a href="../index.html" class="logo">
+            <span class="logo-icon">
+                <i class="fa-solid fa-building"></i>
+            </span>
+
+            <span>Nestora</span>
+        </a>
+
+        <div class="header-actions">
+
+            <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+
+            <a href="../index.html" class="back-home">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Home
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="login-wrapper">
+
+        <!-- LEFT SIDE -->
+
+        <section class="login-visual">
+
+            <div class="visual-overlay"></div>
+
+            <div class="visual-content">
+
+                <span class="eyebrow">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Work better. Anywhere.
+                </span>
+
+                <h1>
+                    Your workspace.
+                    <span>Your way.</span>
+                </h1>
+
+                <p>
+                    Book inspiring workspaces, private offices and meeting
+                    rooms designed around the way you work.
+                </p>
+
+                <div class="visual-features">
+
+                    <div class="feature">
+                        <i class="fa-solid fa-wifi"></i>
+                        <span>High-speed Wi-Fi</span>
+                    </div>
+
+                    <div class="feature">
+                        <i class="fa-solid fa-mug-hot"></i>
+                        <span>Premium amenities</span>
+                    </div>
+
+                    <div class="feature">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Flexible booking</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SIDE -->
+
+        <section class="login-panel">
+
+            <div class="login-card">
+
+                <div class="login-heading">
+
+                    <span class="mobile-logo">
+                        <i class="fa-solid fa-building"></i>
+                    </span>
+
+                    <p class="welcome-text">
+                        Welcome back
+                    </p>
+
+                    <h2>
+                        Sign in to your account
+                    </h2>
+
+                    <p class="subtitle">
+                        Manage your bookings and workspace from one place.
+                    </p>
+
+                </div>
+
+
+                <!-- Google -->
+
+                <button class="google-btn" id="googleBtn">
+
+                    <span class="google-icon">
+                        G
+                    </span>
+
+                    Continue with Google
+
+                </button>
+
+
+                <div class="divider">
+                    <span>or continue with email</span>
+                </div>
+
+
+                <!-- FORM -->
+
+                <form id="loginForm" novalidate>
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email address
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-regular fa-envelope"></i>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                            >
+
+                        </div>
+
+                        <small class="error-message" id="emailError"></small>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <div class="password-label">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <a href="#" id="forgotPassword">
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="passwordToggle"
+                                aria-label="Show password"
+                            >
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+
+                        </div>
+
+                        <small class="error-message" id="passwordError"></small>
+
+                    </div>
+
+
+                    <!-- REMEMBER -->
+
+                    <div class="form-options">
+
+                        <label class="remember">
+
+                            <input
+                                type="checkbox"
+                                id="remember"
+                            >
+
+                            <span class="custom-checkbox"></span>
+
+                            <span>
+                                Remember me
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- LOGIN BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="login-btn"
+                        id="loginBtn"
+                    >
+
+                        <span id="loginText">
+                            Sign in
+                        </span>
+
+                        <span
+                            class="loader"
+                            id="loader"
+                        ></span>
+
+                        <i
+                            class="fa-solid fa-arrow-right"
+                            id="loginArrow"
+                        ></i>
+
+                    </button>
+
+
+                    <!-- MESSAGE -->
+
+                    <div
+                        class="form-message"
+                        id="formMessage"
+                    ></div>
+
+                </form>
+
+
+                <!-- SIGNUP -->
+
+                <p class="signup-text">
+
+                    Don't have an account?
+
+                    <a href="signup.html">
+                        Create an account
+                    </a>
+
+                </p>
+
+
+                <p class="terms">
+
+                    By continuing, you agree to our
+                    <a href="#">Terms</a>
+                    and
+                    <a href="#">Privacy Policy</a>.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="../assets/js/profile.js"></script>
+    <script src="../assets/js/main.js"></script>
+
+</body>
+</html>

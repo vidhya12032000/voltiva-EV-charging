@@ -1,913 +1,372 @@
 /* =========================================================
    VOLTIVA — SERVICES PAGE JS
+   This page does NOT load main.js / site.js, so this file owns:
+   loader, theme, RTL, mobile menu, header state, back-to-top,
+   plus tabs, hero meter, estimator, billing switch and FAQ.
 ========================================================= */
 
 (() => {
   "use strict";
 
+  /* ---------- utilities ---------- */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
-  /* =======================================================
-     HELPERS
-  ======================================================= */
+  const root = document.documentElement;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const $ = (selector, scope = document) =>
-    scope.querySelector(selector);
+  const store = {
+    get(key) { try { return localStorage.getItem(key); } catch (e) { return null; } },
+    set(key, val) { try { localStorage.setItem(key, val); } catch (e) { /* storage blocked */ } }
+  };
 
-  const $$ = (selector, scope = document) =>
-    [...scope.querySelectorAll(selector)];
+  /* ---------- toast ---------- */
+  const toastEl = $("#toast");
+  let toastTimer;
+  function toast(msg) {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2600);
+  }
 
 
-  /* =======================================================
-     PAGE LOADER
-  ======================================================= */
-
-  window.addEventListener("load", () => {
-
+  /* ---------- loader ---------- */
+  function initLoader() {
     const loader = $("#pageLoader");
-
     if (!loader) return;
 
-    setTimeout(() => {
-      loader.classList.add("loaded");
+    let done = false;
+    const hide = () => {
+      if (done) return;
+      done = true;
+      loader.classList.add("hide", "is-hidden");
+      loader.setAttribute("aria-hidden", "true");
+      setTimeout(() => { loader.style.display = "none"; }, 600);
+    };
 
-      setTimeout(() => {
-        loader.remove();
-      }, 600);
+    if (document.readyState === "complete") setTimeout(hide, 250);
+    else window.addEventListener("load", () => setTimeout(hide, 250), { once: true });
 
-    }, 500);
-
-  });
-
-
-  /* =======================================================
-     SCROLL PROGRESS
-  ======================================================= */
-
-  const updateScrollProgress = () => {
-
-    const scrollRoad = $("#scrollRoad");
-
-    if (!scrollRoad) return;
-
-    const scrollTop =
-      window.scrollY;
-
-    const documentHeight =
-      document.documentElement.scrollHeight -
-      window.innerHeight;
-
-    const progress =
-      documentHeight > 0
-        ? scrollTop / documentHeight
-        : 0;
-
-    document.documentElement.style.setProperty(
-      "--p",
-      progress
-    );
-
-  };
-
-  window.addEventListener(
-    "scroll",
-    updateScrollProgress,
-    { passive: true }
-  );
-
-  updateScrollProgress();
-
-
-  /* =======================================================
-     PARALLAX HERO
-  ======================================================= */
-
-  const heroScene =
-    $(".services-hero-scene");
-
-  if (heroScene) {
-
-    window.addEventListener(
-      "scroll",
-      () => {
-
-        const y =
-          window.scrollY;
-
-        heroScene.style.setProperty(
-          "--py",
-          `${y * 0.08}px`
-        );
-
-      },
-      { passive: true }
-    );
-
+    setTimeout(hide, 2500); // safety net: never trap the visitor
   }
 
 
-  /* =======================================================
-     NUMBER COUNTERS
-  ======================================================= */
+  /* ---------- theme ---------- */
+  // CSS default is dark, so "no saved theme" means dark.
+  function currentTheme() {
+    const t = root.getAttribute("data-theme");
+    return t === "light" || t === "dark" ? t : "dark";
+  }
 
-  const counters =
-    $$("[data-count]");
-
-  const animateCounter = (element) => {
-
-    if (element.dataset.counted === "true") {
-      return;
+  function applyTheme(t) {
+    root.setAttribute("data-theme", t);
+    root.classList.remove("light", "dark");
+    root.classList.add(t);
+    const btn = $("#themeToggle");
+    if (btn) {
+      btn.textContent = t === "dark" ? "☾" : "☀";
+      btn.setAttribute("aria-label", t === "dark" ? "Switch to light theme" : "Switch to dark theme");
     }
+  }
 
-    element.dataset.counted = "true";
-
-    const target =
-      Number(element.dataset.count);
-
-    const duration = 1200;
-
-    const startTime =
-      performance.now();
-
-    const update = (currentTime) => {
-
-      const progress =
-        Math.min(
-          (currentTime - startTime) / duration,
-          1
-        );
-
-      const eased =
-        1 - Math.pow(1 - progress, 3);
-
-      const value =
-        Math.floor(target * eased);
-
-      element.textContent =
-        value.toLocaleString();
-
-      if (progress < 1) {
-        requestAnimationFrame(update);
-      } else {
-        element.textContent =
-          target.toLocaleString();
-      }
-
-    };
-
-    requestAnimationFrame(update);
-
-  };
-
-
-  if ("IntersectionObserver" in window) {
-
-    const counterObserver =
-      new IntersectionObserver(
-        entries => {
-
-          entries.forEach(entry => {
-
-            if (entry.isIntersecting) {
-
-              animateCounter(entry.target);
-
-              counterObserver.unobserve(
-                entry.target
-              );
-
-            }
-
-          });
-
-        },
-        {
-          threshold: .5
-        }
-      );
-
-    counters.forEach(counter =>
-      counterObserver.observe(counter)
-    );
-
-  } else {
-
-    counters.forEach(animateCounter);
-
+  function initTheme() {
+    applyTheme(currentTheme());
+    $("#themeToggle")?.addEventListener("click", () => {
+      const next = currentTheme() === "dark" ? "light" : "dark";
+      applyTheme(next);
+      store.set("voltiva-theme", next);
+    });
   }
 
 
-  /* =======================================================
-     SERVICE FILTER
-  ======================================================= */
+  /* ---------- RTL ---------- */
+  function initRTL() {
+    const btn = $("#rtlToggle");
+    const sync = () => btn?.setAttribute("aria-pressed", String(root.getAttribute("dir") === "rtl"));
+    sync();
 
-  const filterButtons =
-    $$(".service-filter-btn");
-
-  const serviceCards =
-    $$(".service-card");
-
-  filterButtons.forEach(button => {
-
-    button.addEventListener(
-      "click",
-      () => {
-
-        const category =
-          button.dataset.category;
-
-        filterButtons.forEach(btn =>
-          btn.classList.remove("active")
-        );
-
-        button.classList.add("active");
-
-        serviceCards.forEach((card, index) => {
-
-          const cardCategory =
-            card.dataset.category;
-
-          const show =
-            category === "all" ||
-            cardCategory === category;
-
-          if (show) {
-
-            card.classList.remove(
-              "is-hidden"
-            );
-
-            card.style.animationDelay =
-              `${index * 60}ms`;
-
-          } else {
-
-            card.classList.add(
-              "is-hidden"
-            );
-
-          }
-
-        });
-
-      }
-    );
-
-  });
+    btn?.addEventListener("click", () => {
+      const rtl = root.getAttribute("dir") !== "rtl";
+      root.setAttribute("dir", rtl ? "rtl" : "ltr");
+      store.set("voltiva-dir", rtl ? "rtl" : "ltr");
+      sync();
+    });
+  }
 
 
-  /* =======================================================
-     SERVICE DETAILS
-  ======================================================= */
+  /* ---------- header, menu, back-to-top ---------- */
+  function initChrome() {
+    const header = $("#siteHeader");
+    const nav = $("#mainNav");
+    const menuBtn = $("#menuBtn");
+    const backTop = $("#backTop");
 
-  const serviceData = {
-
-    charging: {
-      icon: "⚡",
-      title: "Fast EV Charging",
-      description:
-        "A connected charging experience that gives drivers clear station information and a simple way to start a charging session.",
-      features: [
-        "Live charger availability",
-        "AC and DC charging support",
-        "Fast charging up to 120 kW",
-        "Connector compatibility information",
-        "Charging session monitoring"
-      ]
-    },
-
-    finder: {
-      icon: "◉",
-      title: "Smart Station Finder",
-      description:
-        "Find charging stations based on location, availability and charging requirements so you can plan your next stop with confidence.",
-      features: [
-        "Nearby station discovery",
-        "Live availability information",
-        "Connector filtering",
-        "Fast-charging filters",
-        "Route-friendly station selection"
-      ]
-    },
-
-    management: {
-      icon: "▣",
-      title: "Charging Management",
-      description:
-        "A centralized operational layer for businesses managing charging infrastructure and station performance.",
-      features: [
-        "Centralized station management",
-        "Charging point monitoring",
-        "Station performance visibility",
-        "Usage analytics",
-        "Operational reporting"
-      ]
-    },
-
-    fleet: {
-      icon: "◇",
-      title: "Fleet Charging",
-      description:
-        "Coordinate charging activity across electric vehicles and give fleet teams better visibility into energy and vehicle availability.",
-      features: [
-        "Fleet vehicle visibility",
-        "Charging schedule management",
-        "Energy consumption tracking",
-        "Charging cost monitoring",
-        "Operational insights"
-      ]
-    },
-
-    energy: {
-      icon: "☼",
-      title: "Energy Intelligence",
-      description:
-        "Turn charging activity into useful energy information that helps operators understand demand and infrastructure usage.",
-      features: [
-        "Energy consumption monitoring",
-        "Demand visibility",
-        "Charging load insights",
-        "Infrastructure utilization",
-        "Energy usage analysis"
-      ]
-    },
-
-    payments: {
-      icon: "$",
-      title: "Payments & Billing",
-      description:
-        "Simple digital charging transactions with transparent pricing, usage information and transaction history.",
-      features: [
-        "Digital charging payments",
-        "Usage-based billing",
-        "Transaction history",
-        "Digital receipts",
-        "Pricing visibility"
-      ]
-    }
-
-  };
-
-
-  const dialog =
-    $("#serviceDialog");
-
-  const dialogBody =
-    $("#serviceDialogBody");
-
-  const dialogClose =
-    $("#serviceDialogClose");
-
-
-  const openServiceDialog =
-    serviceKey => {
-
-      if (!dialog || !dialogBody) return;
-
-      const service =
-        serviceData[serviceKey];
-
-      if (!service) return;
-
-      dialogBody.innerHTML = `
-
-        <div class="dialog-inner">
-
-          <div class="dialog-icon">
-            ${service.icon}
-          </div>
-
-          <h3>
-            ${service.title}
-          </h3>
-
-          <p>
-            ${service.description}
-          </p>
-
-          <ul class="dialog-features">
-
-            ${service.features
-              .map(
-                feature =>
-                  `<li>${feature}</li>`
-              )
-              .join("")}
-
-          </ul>
-
-        </div>
-
-      `;
-
-      if (typeof dialog.showModal === "function") {
-        dialog.showModal();
-      } else {
-        dialog.setAttribute(
-          "open",
-          ""
-        );
-      }
-
-      document.documentElement.classList.add(
-        "dialog-open"
-      );
-
+    const setMenu = (open) => {
+      nav?.classList.toggle("open", open);
+      nav?.classList.toggle("is-open", open);
+      root.classList.toggle("menu-open", open);
+      menuBtn?.setAttribute("aria-expanded", String(open));
+      menuBtn?.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     };
 
+    menuBtn?.addEventListener("click", () => setMenu(!nav.classList.contains("open")));
+    $$(".nav-link", nav || document).forEach((a) => a.addEventListener("click", () => setMenu(false)));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+    window.addEventListener("resize", () => { if (window.innerWidth > 900) setMenu(false); });
 
-  $$(".service-details-btn")
-    .forEach(button => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      header?.classList.toggle("scrolled", y > 20);
+      header?.classList.toggle("is-scrolled", y > 20);
+      backTop?.classList.toggle("show", y > 600);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
 
-      button.addEventListener(
-        "click",
-        () => {
+    backTop?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+    });
+  }
 
-          openServiceDialog(
-            button.dataset.service
-          );
 
-        }
-      );
+  /* ---------- hero meter ---------- */
+  function initMeter() {
+    const ring = $("#meterRing");
+    const pct = $("#meterPct");
+    const label = $("#meterLabel");
+    if (!ring || !pct) return;
 
+    const C = 515.2; // 2 * PI * 82
+
+    const set = (v) => {
+      ring.style.strokeDashoffset = (C * (1 - v / 100)).toFixed(1);
+      pct.textContent = `${Math.round(v)}%`;
+      if (label) label.textContent = v >= 100 ? "Charged" : v > 80 ? "Topping up" : "Charging";
+    };
+
+    if (reduced) return set(80);
+
+    const RUN = 9000;   // charging time
+    const HOLD = 2200;  // pause at full
+    let visible = true;
+    let t0 = performance.now();
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(ring);
+    }
+
+    const loop = (now) => {
+      if (visible) {
+        const t = clamp(((now - t0) % (RUN + HOLD)) / RUN);
+        // fast to 80%, slow crawl to 100% (mirrors the estimator)
+        const v = t < 0.7 ? (t / 0.7) * 80 : 80 + ((t - 0.7) / 0.3) * 20;
+        set(v);
+      }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+
+
+  /* ---------- service tabs ---------- */
+  function initTabs() {
+    const tabs = $$(".sv-tab");
+    const cards = $$(".sv-card");
+    const empty = $("#svEmpty");
+    if (!tabs.length) return;
+
+    const select = (cat) => {
+      tabs.forEach((t) => {
+        const on = t.dataset.cat === cat;
+        t.classList.toggle("active", on);
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+      });
+      let shown = 0;
+      cards.forEach((c) => {
+        const match = cat === "all" || c.dataset.cat === cat;
+        c.hidden = !match;
+        if (match) shown++;
+      });
+      if (empty) empty.hidden = shown > 0;
+    };
+
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => select(t.dataset.cat));
+      t.addEventListener("keydown", (e) => {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        const dir = (e.key === "ArrowRight") === (root.getAttribute("dir") !== "rtl") ? 1 : -1;
+        const next = tabs[(i + dir + tabs.length) % tabs.length];
+        next.focus();
+        select(next.dataset.cat);
+      });
     });
 
-
-  if (dialogClose) {
-
-    dialogClose.addEventListener(
-      "click",
-      () => {
-
-        dialog.close();
-
-      }
-    );
-
+    select("all");
   }
 
 
-  if (dialog) {
-
-    dialog.addEventListener(
-      "click",
-      event => {
-
-        if (
-          event.target === dialog
-        ) {
-          dialog.close();
-        }
-
-      }
-    );
-
-    dialog.addEventListener(
-      "close",
-      () => {
-
-        document.documentElement.classList.remove(
-          "dialog-open"
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     LIVE ENERGY DASHBOARD
-  ======================================================= */
-
-  const powerElement =
-    $("#energyPower");
-
-  const batteryElement =
-    $("#batteryValue");
-
-  const batteryProgress =
-    $("#batteryProgress");
-
-  const timeElement =
-    $("#timeValue");
-
-
-  let power = 82;
-  let battery = 78;
-  let minutes = 18;
-
-
-  const updateEnergyDashboard = () => {
-
-    if (powerElement) {
-
-      power +=
-        Math.random() > .5
-          ? 1
-          : -1;
-
-      power =
-        Math.max(
-          70,
-          Math.min(120, power)
-        );
-
-      powerElement.textContent =
-        power;
-
-    }
-
-
-    if (batteryElement) {
-
-      battery +=
-        Math.random() > .65
-          ? 1
-          : 0;
-
-      battery =
-        Math.min(100, battery);
-
-      batteryElement.textContent =
-        `${battery}%`;
-
-    }
-
-
-    if (batteryProgress) {
-
-      batteryProgress.style.width =
-        `${battery}%`;
-
-    }
-
-
-    if (timeElement) {
-
-      minutes =
-        Math.max(
-          4,
-          20 -
-          Math.floor(
-            (battery - 75) * .7
-          )
-        );
-
-      timeElement.textContent =
-        `${minutes} min`;
-
-    }
-
-  };
-
-
-  updateEnergyDashboard();
-
-  setInterval(
-    updateEnergyDashboard,
-    2200
-  );
-
-
-  /* =======================================================
-     DETAIL LIST INTERACTION
-  ======================================================= */
-
-  const detailItems =
-    $$(".detail-list-item");
-
-  detailItems.forEach(item => {
-
-    item.addEventListener(
-      "click",
-      () => {
-
-        detailItems.forEach(
-          current =>
-            current.classList.remove(
-              "active"
-            )
-        );
-
-        item.classList.add(
-          "active"
-        );
-
-      }
-    );
-
-  });
-
-
-  /* =======================================================
-     FAQ
-  ======================================================= */
-
-  const faqItems =
-    $$(".service-faq-item");
-
-  faqItems.forEach(item => {
-
-    item.addEventListener(
-      "toggle",
-      () => {
-
-        if (!item.open) return;
-
-        faqItems.forEach(other => {
-
-          if (
-            other !== item &&
-            other.open
-          ) {
-            other.open = false;
-          }
-
-        });
-
-      }
-    );
-
-  });
-
-
-  /* =======================================================
-     CARD MOUSE GLOW
-  ======================================================= */
-
-  serviceCards.forEach(card => {
-
-    card.addEventListener(
-      "pointermove",
-      event => {
-
-        const rect =
-          card.getBoundingClientRect();
-
-        const x =
-          event.clientX -
-          rect.left;
-
-        const y =
-          event.clientY -
-          rect.top;
-
-        card.style.setProperty(
-          "--mx",
-          `${x}px`
-        );
-
-        card.style.setProperty(
-          "--my",
-          `${y}px`
-        );
-
-      }
-    );
-
-  });
-
-
-  /* =======================================================
-     REVEAL ON SCROLL
-  ======================================================= */
-
-  const revealElements = [
-    ...$$(".service-card"),
-    ...$$(".service-process-step"),
-    ...$$(".detail-list-item"),
-    $(".intelligence-dashboard"),
-    $(".detail-visual")
-  ].filter(Boolean);
-
-
-  revealElements.forEach(
-    element => {
-
-      element.style.opacity = "0";
-
-      element.style.transform =
-        "translateY(25px)";
-
-      element.style.transition =
-        "opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1)";
-
-    }
-  );
-
-
-  if ("IntersectionObserver" in window) {
-
-    const revealObserver =
-      new IntersectionObserver(
-        entries => {
-
-          entries.forEach(entry => {
-
-            if (
-              !entry.isIntersecting
-            ) {
-              return;
-            }
-
-            entry.target.style.opacity =
-              "1";
-
-            entry.target.style.transform =
-              "translateY(0)";
-
-            revealObserver.unobserve(
-              entry.target
-            );
-
-          });
-
-        },
-        {
-          threshold: .12
-        }
-      );
-
-
-    revealElements.forEach(
-      element =>
-        revealObserver.observe(element)
-    );
-
-  } else {
-
-    revealElements.forEach(
-      element => {
-
-        element.style.opacity = "1";
-
-        element.style.transform =
-          "translateY(0)";
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     CTA CAR INTERACTION
-  ======================================================= */
-
-  const cta =
-    $(".services-cta");
-
-  const miniCar =
-    $(".cta-mini-car");
-
-  if (cta && miniCar) {
-
-    cta.addEventListener(
-      "pointerenter",
-      () => {
-
-        miniCar.style.animationPlayState =
-          "paused";
-
-      }
-    );
-
-    cta.addEventListener(
-      "pointerleave",
-      () => {
-
-        miniCar.style.animationPlayState =
-          "running";
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     TOAST
-  ======================================================= */
-
-  const toast =
-    $("#toast");
-
-  let toastTimer;
-
-  const showToast = message => {
-
-    if (!toast) return;
-
-    toast.textContent =
-      message;
-
-    toast.classList.add(
-      "show"
-    );
-
-    clearTimeout(toastTimer);
-
-    toastTimer =
-      setTimeout(() => {
-
-        toast.classList.remove(
-          "show"
-        );
-
-      }, 2600);
-
-  };
-
-
-  /* =======================================================
-     SERVICE BUTTON MICRO FEEDBACK
-  ======================================================= */
-
-  $$(".service-details-btn")
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          showToast(
-            "Opening service details..."
-          );
-
-        }
-      );
-
-    });
-
-
-  /* =======================================================
-     BACK TO TOP
-  ======================================================= */
-
-  const backTop =
-    $("#backTop");
-
-  if (backTop) {
-
-    const toggleBackTop = () => {
-
-      if (window.scrollY > 500) {
-
-        backTop.classList.add(
-          "show"
-        );
-
-      } else {
-
-        backTop.classList.remove(
-          "show"
-        );
-
-      }
-
+  /* ---------- charge estimator ---------- */
+  function initCalculator() {
+    const battery = $("#calcBattery");
+    const charger = $("#calcCharger");
+    const start = $("#calcStart");
+    const end = $("#calcEnd");
+    if (!battery || !charger || !start || !end) return;
+
+    const startOut = $("#calcStartOut");
+    const endOut = $("#calcEndOut");
+    const batFrom = $("#batFrom");
+    const batTo = $("#batTo");
+    const resTime = $("#resTime");
+    const resEnergy = $("#resEnergy");
+    const resCost = $("#resCost");
+
+    const fmtTime = (hours) => {
+      const mins = Math.max(1, Math.round(hours * 60));
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      return h ? `${h} h ${m} min` : `${m} min`;
     };
 
-    window.addEventListener(
-      "scroll",
-      toggleBackTop,
-      { passive: true }
-    );
+    const update = () => {
+      const size = Number(battery.value);
+      const opt = charger.selectedOptions[0];
+      const power = Number(charger.value);
+      const rate = Number(opt.dataset.rate);
+      const s = Number(start.value);
+      const e = Number(end.value);
 
-    toggleBackTop();
+      // Car can't accept more than roughly 2C, and chargers lose ~8% as heat.
+      const usable = Math.min(power, size * 2) * 0.92;
+      // DC chargers taper hard past 80%; AC barely does.
+      const taper = power >= 50 ? 0.35 : 0.9;
+
+      const fastKwh = size * Math.max(0, Math.min(e, 80) - s) / 100;
+      const slowKwh = size * Math.max(0, e - Math.max(s, 80)) / 100;
+      const kwh = fastKwh + slowKwh;
+      const hours = fastKwh / usable + slowKwh / (usable * taper);
+
+      startOut.textContent = `${s}%`;
+      endOut.textContent = `${e}%`;
+      batFrom.style.width = `${s}%`;
+      batTo.style.width = `${e}%`;
+      resTime.textContent = fmtTime(hours);
+      resEnergy.textContent = `${kwh.toFixed(1)} kWh`;
+      resCost.textContent = `₹${Math.round(kwh * rate).toLocaleString("en-IN")}`;
+    };
+
+    // Keep target above start, and start below target.
+    start.addEventListener("input", () => {
+      if (Number(start.value) >= Number(end.value)) end.value = Math.min(100, Number(start.value) + 5);
+      update();
+    });
+    end.addEventListener("input", () => {
+      if (Number(end.value) <= Number(start.value)) start.value = Math.max(0, Number(end.value) - 5);
+      update();
+    });
+    battery.addEventListener("change", update);
+    charger.addEventListener("change", update);
+
+    update();
+  }
 
 
-    backTop.addEventListener(
-      "click",
-      () => {
+  /* ---------- plans: monthly / yearly ---------- */
+  function initBilling() {
+    const buttons = $$(".sv-billing button");
+    const amounts = $$(".sv-price .amt[data-monthly]");
+    if (!buttons.length) return;
 
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
-
+    const set = (mode, announce) => {
+      buttons.forEach((b) => {
+        const on = b.dataset.billing === mode;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      amounts.forEach((el) => {
+        const value = Number(el.dataset[mode]);
+        el.textContent = `₹${value.toLocaleString("en-IN")}`;
+      });
+      if (announce) {
+        toast(mode === "yearly"
+          ? "Yearly billing: prices shown per month, billed yearly."
+          : "Monthly billing selected.");
       }
-    );
+    };
 
+    buttons.forEach((b) => b.addEventListener("click", () => set(b.dataset.billing, true)));
+    set("monthly", false);
   }
 
 
-  /* =======================================================
-     ACTIVE SERVICE HASH
-  ======================================================= */
+  /* ---------- FAQ accordion ---------- */
+  function initFaq() {
+    const items = $$(".sv-faq-item");
+    if (!items.length) return;
 
-  const hash =
-    window.location.hash;
+    const setOpen = (item, open) => {
+      const q = $(".sv-faq-q", item);
+      const a = $(".sv-faq-a", item);
+      q.setAttribute("aria-expanded", String(open));
+      a.style.maxHeight = open ? `${a.scrollHeight}px` : "0px";
+    };
 
-  if (hash === "#fleet") {
+    items.forEach((item) => {
+      $(".sv-faq-q", item).addEventListener("click", () => {
+        const open = $(".sv-faq-q", item).getAttribute("aria-expanded") !== "true";
+        items.forEach((other) => { if (other !== item) setOpen(other, false); });
+        setOpen(item, open);
+      });
+    });
 
-    const fleetButton =
-      $('.service-filter-btn[data-category="fleet"]');
-
-    if (fleetButton) {
-      fleetButton.click();
-    }
-
+    // Keep open panels the right height if text reflows.
+    window.addEventListener("resize", () => {
+      items.forEach((item) => {
+        if ($(".sv-faq-q", item).getAttribute("aria-expanded") === "true") setOpen(item, true);
+      });
+    });
   }
 
 
+  /* ---------- scroll reveal ---------- */
+  function initReveal() {
+    const targets = $$(".sv-section, .sv-cta-inner");
+    if (reduced || !("IntersectionObserver" in window)) return;
+
+    targets.forEach((el) => el.classList.add("sv-reveal"));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    targets.forEach((el) => io.observe(el));
+
+    // Safety net: never leave content invisible.
+    setTimeout(() => targets.forEach((el) => el.classList.add("in")), 4000);
+  }
+
+
+  /* ---------- boot ---------- */
+  function init() {
+    initLoader();
+    initTheme();
+    initRTL();
+    initChrome();
+    initMeter();
+    initTabs();
+    initCalculator();
+    initBilling();
+    initFaq();
+    initReveal();
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();

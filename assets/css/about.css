@@ -2593,3 +2593,87 @@ img {
     animation: none;
   }
 }
+
+/* =========================================================
+   APPEND THIS TO THE END OF about.css
+   RTL / bidi fixes + small accessibility upgrades
+   (relies on --dir being 1 in LTR and -1 in RTL, as the
+   rest of your CSS already does)
+========================================================= */
+
+/* 1) Marquee: a max-content track inside an RTL box overflows to
+      the LEFT, so translateX(-50%) scrolled into empty space.
+      Keep the scroller itself LTR; the existing
+      [dir="rtl"] reverse rule still mirrors the scroll direction. */
+.about-marquee {
+  direction: ltr;
+}
+
+/* 2) Range slider: browsers flip <input type="range"> in RTL
+      (min on the right), but the fill gradient was hard-coded 90deg,
+      so the colour filled the wrong side of the thumb. */
+#kmRange {
+  background: linear-gradient(
+    calc(90deg * var(--dir, 1)),
+    var(--acc) var(--fill, 32%),
+    var(--line) var(--fill, 32%)
+  );
+}
+
+/* 3) Numbers with symbols ("250+", "18K+", "96%", "₹1,200", "120 kW")
+      get reordered by the bidi algorithm in RTL ("+250").
+      Isolate them and keep them LTR. */
+.hero-stat strong,
+.number-card strong,
+.sustainability-metric strong,
+.calc-result strong,
+.calc-label output,
+.tech-data strong {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+/* block-level ones would now hug the wrong edge in RTL */
+[dir="rtl"] .hero-stat strong,
+[dir="rtl"] .number-card strong {
+  text-align: right;
+}
+
+/* 4) Directional arrows should point the reading direction */
+[dir="rtl"] .btn-arrow {
+  display: inline-block;
+  scale: -1 1;
+}
+
+/* 5) Gradients that were hard-coded left→right */
+.mission-energy-line {
+  background: linear-gradient(
+    calc(90deg * var(--dir, 1)),
+    var(--acc),
+    transparent
+  );
+}
+[dir="rtl"] .flow-line-progress {
+  animation-direction: reverse;
+}
+
+/* 6) Keyboard focus (gallery buttons, segmented control, lightbox) */
+.gal-item:focus-visible,
+.seg:focus-visible,
+.lb-btn:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 3px;
+}
+
+/* 7) Reduced motion: your file only paused the marquee + CTA zoom.
+      This covers every orbit / float / pulse animation on the page. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

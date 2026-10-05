@@ -1,10 +1,8 @@
 /* =========================================================
    VOLTIVA — STATIONS PAGE JS
-   - station cards with generated SVG artwork (or your own photos)
-   - filters, sorting, saved stations, live bay updates
-   - map with a car driving the route
-   - reservation dialog with cost estimate
-   - hero charging scene, scroll journey, scroll road, CTA car
+   This page does NOT load main.js, so this file owns:
+   loader, theme, RTL, mobile menu, header state, back-to-top,
+   plus stations, filters, map, dialog, hero scene and journey.
 ========================================================= */
 
 (() => {
@@ -26,6 +24,7 @@
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     }[c]));
 
+  const root = document.documentElement;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
@@ -39,6 +38,12 @@
     set(key, value) {
       try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage blocked */ }
     }
+  };
+
+  // plain-string storage for theme / direction (shared with the other pages)
+  const plain = {
+    get(key) { try { return localStorage.getItem(key); } catch (e) { return null; } },
+    set(key, val) { try { localStorage.setItem(key, val); } catch (e) { /* storage blocked */ } }
   };
 
   // Small seeded random so every station always draws the same artwork
@@ -170,6 +175,81 @@
   };
 
   let currentList = stations.slice();
+
+
+  /* =======================================================
+     SITE CHROME: theme, RTL, mobile menu
+     (owned here because this page does not load main.js)
+  ======================================================= */
+
+  // The CSS default is dark, so "no saved theme" means dark.
+  function currentTheme() {
+    const t = root.getAttribute("data-theme");
+    return t === "light" || t === "dark" ? t : "dark";
+  }
+
+  function applyTheme(t) {
+    root.setAttribute("data-theme", t);
+    root.classList.remove("light", "dark");
+    root.classList.add(t);
+    const btn = $("#themeToggle");
+    if (btn) {
+      btn.textContent = t === "dark" ? "☾" : "☀";
+      btn.setAttribute("aria-label", t === "dark" ? "Switch to light theme" : "Switch to dark theme");
+    }
+  }
+
+  function initTheme() {
+    applyTheme(currentTheme());
+    $("#themeToggle")?.addEventListener("click", () => {
+      const next = currentTheme() === "dark" ? "light" : "dark";
+      applyTheme(next);
+      plain.set("voltiva-theme", next);
+    });
+  }
+
+  function initRTL() {
+    const btn = $("#rtlToggle");
+    const sync = () => btn?.setAttribute("aria-pressed", String(root.getAttribute("dir") === "rtl"));
+    sync();
+
+    btn?.addEventListener("click", () => {
+      const rtl = root.getAttribute("dir") !== "rtl";
+      root.setAttribute("dir", rtl ? "rtl" : "ltr");
+      plain.set("voltiva-dir", rtl ? "rtl" : "ltr");
+      sync();
+    });
+  }
+
+  function initMobileMenu() {
+    const menuBtn = $("#menuBtn");
+    const nav = $("#mainNav");
+    if (!menuBtn || !nav) return;
+
+    const setMenu = (open) => {
+      nav.classList.toggle("open", open);
+      nav.classList.toggle("is-open", open);
+      menuBtn.setAttribute("aria-expanded", String(open));
+      menuBtn.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
+    };
+
+    menuBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setMenu(!nav.classList.contains("open"));
+    });
+
+    $$(".nav-link", nav).forEach((link) => link.addEventListener("click", () => setMenu(false)));
+
+    document.addEventListener("click", (e) => {
+      if (nav.classList.contains("open") && !nav.contains(e.target) && !menuBtn.contains(e.target)) {
+        setMenu(false);
+      }
+    });
+
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+    window.addEventListener("resize", () => { if (window.innerWidth > 900) setMenu(false); });
+  }
 
 
   /* =======================================================
@@ -309,244 +389,162 @@
       : "";
 
     return `
-    <svg class="station-art ${v}${offline ? " is-off" : ""}" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <rect width="400" height="240" fill="url(#sky-${v})"/>
-      ${sky}${orb}
-      ${back}
-      <rect y="172" width="400" height="68" class="art-ground"/>
-      <path d="M0 208H400" class="art-line"/>
-      <polygon points="56,88 344,78 350,98 50,102" fill="url(#sv-solar)"/>
-      <rect x="50" y="100" width="300" height="12" rx="3" class="art-fascia"/>
-      <text x="200" y="109" text-anchor="middle" class="art-fascia-t">VOLTIVA ⚡ CHARGE</text>
-      <rect x="56" y="112" width="288" height="2.5" class="art-lightbar"/>
-      <path d="M72 114L48 172H352L328 114Z" class="art-beam"/>
-      <rect x="68" y="112" width="6" height="60" class="art-post"/>
-      <rect x="326" y="112" width="6" height="60" class="art-post"/>
-      ${pylons}
-      ${cars}
-      ${lamps}
-      ${offline ? `<rect width="400" height="240" class="art-dim"/><rect x="146" y="196" width="108" height="22" rx="11" class="art-off-tag"/><text x="200" y="211" text-anchor="middle" class="art-off-text">OFFLINE</text>` : ""}
+    <svg class="station-art ${v}${offline ? " is-off" : ""}" viewBox="0 0 400 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="400" height="180" fill="url(#sky-${v})"/>
+      ${sky}${orb}${back}
+      <rect y="166" width="400" height="14" class="art-ground"/>
+      <path d="M0 173H400" class="art-line"/>
+      <path d="M62 121L40 168H360L338 121Z" class="art-beam"/>
+      <rect x="60" y="121" width="5" height="47" class="art-post"/>
+      <rect x="335" y="121" width="5" height="47" class="art-post"/>
+      <rect x="56" y="108" width="288" height="13" rx="3" class="art-fascia"/>
+      <text x="200" y="118" text-anchor="middle" class="art-fascia-t">VOLTIVA</text>
+      <rect x="64" y="121" width="272" height="3" rx="1.5" class="art-lightbar"/>
+      ${lamps}${pylons}${cars}
+      ${offline ? `<rect width="400" height="180" class="art-dim"/><rect x="138" y="72" width="124" height="34" rx="9" class="art-off-tag"/><text x="200" y="94" text-anchor="middle" class="art-off-text">OFFLINE</text>` : ""}
     </svg>`;
   }
 
 
   /* =======================================================
-     RENDER STATIONS
+     TOAST
   ======================================================= */
 
-  function reserveLabel(s) {
-    if (s.status === "offline") return "Unavailable";
-    if (s.free === 0) return "Notify me";
-    return "Reserve →";
-  }
-
-  function cardHTML(s, index) {
-    const pct = Math.round((s.free / s.total) * 100);
-    const saved = state.saved.has(s.id);
-    const media = s.image
-      ? `<img class="station-photo" src="${esc(s.image)}" alt="${esc(s.name)} charging station" loading="lazy" decoding="async">`
-      : stationArt(s);
-
-    return `
-      <article class="station-card" data-id="${s.id}" style="--i:${index}">
-
-        <div class="station-media">
-          ${media}
-          <span class="station-status ${s.status}">${cap(s.status)}</span>
-          <button class="save-btn${saved ? " on" : ""}" type="button" data-save="${s.id}"
-                  aria-pressed="${saved}" aria-label="Save ${esc(s.name)}">♥</button>
-          ${s.distance != null ? `<span class="media-chip chip-dist">◎ ${s.distance.toFixed(1)} km</span>` : ""}
-          ${s.fast ? `<span class="media-chip chip-fast">⚡ Fast</span>` : ""}
-        </div>
-
-        <div class="station-body">
-
-          <div class="station-top">
-            <div>
-              <h3 class="station-name">${esc(s.name)}</h3>
-              <div class="station-area">${esc(s.area)}</div>
-            </div>
-            <div class="station-rating" aria-label="Rating ${s.rating} out of 5">★ ${s.rating.toFixed(1)}</div>
-          </div>
-
-          <ul class="station-amenities">
-            ${s.amenities.map((a) => `<li>${esc(a)}</li>`).join("")}
-          </ul>
-
-          <div class="station-details">
-            <div class="station-detail"><span>Connector</span><strong>${esc(s.connector)}</strong></div>
-            <div class="station-detail"><span>Power</span><strong>${s.power} kW</strong></div>
-            <div class="station-detail"><span>Free bays</span><strong class="js-free">${s.free}/${s.total}</strong></div>
-          </div>
-
-          <div class="station-progress"><span style="--charge:${pct}%"></span></div>
-
-          <div class="station-bottom">
-            <div class="station-price">₹${s.rate}<small> / kWh</small></div>
-            <button class="reserve-btn" type="button" data-reserve="${s.id}"
-                    ${s.status === "offline" ? "disabled" : ""}>${reserveLabel(s)}</button>
-          </div>
-
-        </div>
-
-      </article>`;
-  }
-
-  function renderStations(list) {
-    if (!results) return;
-
-    currentList = list;
-    results.innerHTML = list.map(cardHTML).join("");
-    if (noResults) noResults.hidden = list.length > 0;
-
-    /* photos that fail to load fall back to the illustration */
-    $$(".station-photo", results).forEach((img) => {
-      img.addEventListener("error", () => {
-        const s = byId(img.closest(".station-card").dataset.id);
-        img.insertAdjacentHTML("beforebegin", stationArt(s));
-        img.remove();
-      }, { once: true });
-    });
-
-    if (resultCount) {
-      const sortText = {
-        recommended: "", nearest: " · nearest first", cheapest: " · lowest price first",
-        fastest: " · fastest chargers first", free: " · most free bays first"
-      }[state.sort];
-      resultCount.textContent = `Showing ${list.length} of ${stations.length} stations${sortText}`;
-    }
-
-    const visible = new Set(list.map((s) => s.id));
-    $$(".map-node").forEach((node) => {
-      node.classList.toggle("is-dim", !visible.has(node.dataset.station));
-    });
+  let toastTimer;
+  function toast(msg) {
+    const t = $("#toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
   }
 
 
   /* =======================================================
-     FILTERS + SORT
+     STATION CARDS + FILTERS
   ======================================================= */
 
-  function applyFilters() {
-    const search = (searchInput?.value || "").trim().toLowerCase();
-    const status = statusFilter?.value || "all";
-    const charger = chargerFilter?.value || "all";
-    const connector = connectorFilter?.value || "all";
+  const CITY = { lat: 13.0827, lng: 80.2707 }; // central Chennai fallback
 
-    let list = stations.filter((s) => {
-      const haystack = [s.name, s.area, s.connector, ...s.amenities].join(" ").toLowerCase();
-      const matchesSearch = !search || haystack.includes(search);
-      const matchesStatus = status === "all" || s.status === status;
-      const matchesCharger = charger === "all" || (charger === "fast" ? s.fast : !s.fast);
-      const matchesConnector = connector === "all" || s.connector === connector;
+  function cardHTML(s, i) {
+    const d = state.user ? haversine(state.user, s) : null;
+    const saved = state.saved.has(s.id);
+    const pct = Math.round((s.free / s.total) * 100);
+    const canReserve = s.status !== "offline" && s.free > 0;
+    return `
+    <article class="station-card" data-id="${s.id}" style="--i:${i}">
+      <div class="station-media">
+        ${s.image ? `<img class="station-photo" src="${esc(s.image)}" alt="" loading="lazy" onerror="this.remove()">` : ""}
+        ${stationArt(s)}
+        <span class="station-status ${s.status}">${cap(s.status)}</span>
+        <button class="save-btn ${saved ? "on" : ""}" type="button" data-save="${s.id}" aria-pressed="${saved}" aria-label="${saved ? "Remove" : "Save"} ${esc(s.name)}">${saved ? "♥" : "♡"}</button>
+        ${s.fast ? `<span class="media-chip chip-fast">⚡ Fast</span>` : ""}
+        ${d != null ? `<span class="media-chip chip-dist">${d.toFixed(1)} km</span>` : ""}
+      </div>
+      <div class="station-body">
+        <div class="station-top">
+          <div><h3 class="station-name">${esc(s.name)}</h3><div class="station-area">${esc(s.area)}</div></div>
+          <span class="station-rating">★ ${s.rating}</span>
+        </div>
+        <ul class="station-amenities">${s.amenities.map((a) => `<li>${esc(a)}</li>`).join("")}</ul>
+        <div class="station-details">
+          <div class="station-detail"><span>Connector</span><strong>${esc(s.connector)}</strong></div>
+          <div class="station-detail"><span>Power</span><strong>${s.power} kW</strong></div>
+          <div class="station-detail"><span>Free bays</span><strong><span class="js-free">${s.free}</span>/${s.total}</strong></div>
+        </div>
+        <div class="station-progress"><span style="--charge:${pct}%"></span></div>
+        <div class="station-bottom">
+          <div class="station-price">₹${s.rate}<small> /kWh</small></div>
+          <button class="reserve-btn" type="button" data-reserve="${s.id}" ${canReserve ? "" : "disabled"}>${s.status === "offline" ? "Offline" : s.free === 0 ? "Full" : "Reserve"}</button>
+        </div>
+      </div>
+    </article>`;
+  }
 
-      let matchesQuick = true;
-      if (state.quick === "available") matchesQuick = s.status === "available";
-      if (state.quick === "fast") matchesQuick = s.fast;
-      if (state.quick === "saved") matchesQuick = state.saved.has(s.id);
+  function matches(s) {
+    const q = searchInput.value.trim().toLowerCase();
+    if (q) {
+      const hay = [s.name, s.area, s.connector, s.status, ...s.amenities].join(" ").toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (state.quick === "available" && s.status !== "available") return false;
+    if (state.quick === "fast" && !s.fast) return false;
+    if (state.quick === "saved" && !state.saved.has(s.id)) return false;
+    if (statusFilter.value !== "all" && s.status !== statusFilter.value) return false;
+    if (chargerFilter.value === "fast" && !s.fast) return false;
+    if (chargerFilter.value === "standard" && s.fast) return false;
+    if (connectorFilter.value !== "all" && s.connector !== connectorFilter.value) return false;
+    return true;
+  }
 
-      return matchesSearch && matchesStatus && matchesCharger && matchesConnector && matchesQuick;
-    });
-
-    const sorters = {
-      recommended: null,
-      nearest: (a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity),
+  function sortList(list) {
+    const u = state.user || CITY;
+    const rank = { available: 0, busy: 1, offline: 2 };
+    const fns = {
+      recommended: (a, b) => rank[a.status] - rank[b.status] || b.rating - a.rating,
+      nearest: (a, b) => haversine(u, a) - haversine(u, b),
       cheapest: (a, b) => a.rate - b.rate,
       fastest: (a, b) => b.power - a.power,
       free: (a, b) => b.free - a.free
     };
-    if (sorters[state.sort]) list = list.slice().sort(sorters[state.sort]);
-
-    renderStations(list);
+    return list.slice().sort(fns[sortFilter.value] || fns.recommended);
   }
 
-  function setQuick(value) {
-    state.quick = value;
-    quickFilters.forEach((btn) => {
-      const on = btn.dataset.filter === value;
-      btn.classList.toggle("active", on);
-      btn.setAttribute("aria-pressed", String(on));
+  function render() {
+    currentList = sortList(stations.filter(matches));
+    results.innerHTML = currentList.map(cardHTML).join("");
+    resultCount.textContent = `${currentList.length} of ${stations.length} stations`;
+    noResults.hidden = currentList.length > 0;
+    const ids = new Set(currentList.map((s) => s.id));
+    $$(".map-node").forEach((n) => n.classList.toggle("is-dim", !ids.has(n.dataset.id)));
+    quickFilters.forEach((b) => {
+      const on = b.dataset.filter === state.quick;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", String(on));
     });
   }
 
-  function resetAllFilters() {
-    if (searchInput) searchInput.value = "";
-    if (statusFilter) statusFilter.value = "all";
-    if (chargerFilter) chargerFilter.value = "all";
-    if (connectorFilter) connectorFilter.value = "all";
-    if (sortFilter) sortFilter.value = "recommended";
-    state.sort = "recommended";
-    setQuick("all");
-    applyFilters();
+  function resetAll() {
+    searchInput.value = "";
+    statusFilter.value = chargerFilter.value = connectorFilter.value = "all";
+    sortFilter.value = "recommended";
+    state.quick = "all";
+    render();
   }
 
   function initFilters() {
-    let timer;
-    searchInput?.addEventListener("input", () => {
-      clearTimeout(timer);
-      timer = setTimeout(applyFilters, 120);
-    });
+    searchInput.addEventListener("input", render);
+    [statusFilter, chargerFilter, connectorFilter, sortFilter].forEach((el) => el.addEventListener("change", render));
+    clearFilters.addEventListener("click", resetAll);
+    resetSearch.addEventListener("click", resetAll);
 
-    [statusFilter, chargerFilter, connectorFilter].forEach((select) => {
-      select?.addEventListener("change", () => {
-        setQuick("all");
-        applyFilters();
-      });
-    });
-
-    sortFilter?.addEventListener("change", () => {
-      state.sort = sortFilter.value;
-      if (state.sort === "nearest" && !state.user) {
-        toast("Tap “Near me” first so we can measure distances.");
-      }
-      applyFilters();
-    });
-
-    quickFilters.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        setQuick(btn.dataset.filter);
-        applyFilters();
-      });
-    });
-
-    clearFilters?.addEventListener("click", resetAllFilters);
-    resetSearch?.addEventListener("click", resetAllFilters);
-  }
-
-
-  /* =======================================================
-     CARD EVENTS: reserve, save, 3D tilt
-  ======================================================= */
-
-  function initCardEvents() {
-    if (!results) return;
+    quickFilters.forEach((b) => b.addEventListener("click", () => {
+      state.quick = b.dataset.filter;
+      render();
+    }));
 
     results.addEventListener("click", (e) => {
-      const reserve = e.target.closest("[data-reserve]");
       const save = e.target.closest("[data-save]");
-
-      if (reserve) {
-        const s = byId(reserve.dataset.reserve);
-        if (s.status === "offline") return;
-        if (s.free === 0) {
-          toast(`We'll notify you when a bay frees up at ${s.name}.`);
-          return;
-        }
-        openReserve(s.id);
-      }
-
       if (save) {
         const id = save.dataset.save;
-        const on = !state.saved.has(id);
-        on ? state.saved.add(id) : state.saved.delete(id);
+        state.saved.has(id) ? state.saved.delete(id) : state.saved.add(id);
         store.set("voltiva-saved", [...state.saved]);
-        save.classList.toggle("on", on);
-        save.setAttribute("aria-pressed", String(on));
-        toast(on ? `${byId(id).name} saved` : `${byId(id).name} removed from saved`);
-        if (state.quick === "saved") applyFilters();
+        toast(state.saved.has(id) ? "Saved to your list" : "Removed from saved");
+        if (state.quick === "saved") render();
+        else {
+          const on = state.saved.has(id);
+          save.classList.toggle("on", on);
+          save.textContent = on ? "♥" : "♡";
+          save.setAttribute("aria-pressed", String(on));
+        }
+        return;
       }
+      const res = e.target.closest("[data-reserve]");
+      if (res) openReserve(res.dataset.reserve);
     });
 
+    // spotlight tilt (desktop only)
     if (finePointer && !reduced) {
       results.addEventListener("pointermove", (e) => {
         const card = e.target.closest(".station-card");
@@ -554,336 +552,46 @@
         const r = card.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width;
         const y = (e.clientY - r.top) / r.height;
-        card.style.setProperty("--rx", `${((0.5 - y) * 7).toFixed(2)}deg`);
-        card.style.setProperty("--ry", `${((x - 0.5) * 9).toFixed(2)}deg`);
-        card.style.setProperty("--mx", `${(x * 100).toFixed(0)}%`);
-        card.style.setProperty("--my", `${(y * 100).toFixed(0)}%`);
+        card.style.setProperty("--mx", x * 100 + "%");
+        card.style.setProperty("--my", y * 100 + "%");
+        card.style.setProperty("--ry", (x - 0.5) * 6 + "deg");
+        card.style.setProperty("--rx", (0.5 - y) * 6 + "deg");
       });
-
       results.addEventListener("pointerout", (e) => {
         const card = e.target.closest(".station-card");
-        if (card && !card.contains(e.relatedTarget)) {
-          card.style.setProperty("--rx", "0deg");
-          card.style.setProperty("--ry", "0deg");
-        }
+        if (!card) return;
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
       });
     }
-  }
 
-
-  /* =======================================================
-     LIVE BAY UPDATES (simulated)
-  ======================================================= */
-
-  function refreshLive(s) {
-    const card = $(`.station-card[data-id="${s.id}"]`);
-    if (card) {
-      const free = $(".js-free", card);
-      if (free) {
-        free.textContent = `${s.free}/${s.total}`;
-        free.classList.remove("flash");
-        void free.offsetWidth;
-        free.classList.add("flash");
-      }
-      const bar = $(".station-progress span", card);
-      if (bar) bar.style.setProperty("--charge", `${Math.round((s.free / s.total) * 100)}%`);
-      const st = $(".station-status", card);
-      if (st) { st.className = `station-status ${s.status}`; st.textContent = cap(s.status); }
-      const btn = $(".reserve-btn", card);
-      if (btn) btn.textContent = reserveLabel(s);
-    }
-    const node = $(`.map-node[data-station="${s.id}"]`);
-    if (node) {
-      node.classList.toggle("busy", s.status === "busy");
-      node.classList.toggle("offline", s.status === "offline");
-    }
-  }
-
-  function initLiveTicker() {
-    setInterval(() => {
-      if (document.hidden) return;
-      const pool = stations.filter((s) => s.status !== "offline");
-      const s = pool[Math.floor(Math.random() * pool.length)];
-      const next = clamp(s.free + (Math.random() < 0.5 ? -1 : 1), 0, s.total);
-      if (next === s.free) return;
-      s.free = next;
-      s.status = next === 0 ? "busy" : "available";
-      refreshLive(s);
-    }, 4500);
-  }
-
-
-  /* =======================================================
-     MAP
-  ======================================================= */
-
-  function buildMap() {
-    const wrap = $("#mapNodes");
-    const pop = $("#mapPop");
-    if (!wrap) return;
-
-    wrap.innerHTML = stations.map((s) => `
-      <button class="map-node ${s.status}" type="button" data-station="${s.id}"
-              style="left:${s.map.x}%;top:${s.map.y}%"
-              aria-label="${esc(s.name)}, ${s.status}"><span></span></button>
-      <div class="map-label" style="left:${s.map.x}%;top:${s.map.y + 5}%">${esc(s.area.split(" · ")[0])}</div>
-    `).join("");
-
-    const show = (node) => {
-      const s = byId(node.dataset.station);
-      pop.hidden = false;
-      pop.style.left = `${s.map.x}%`;
-      pop.style.top = `${s.map.y}%`;
-      pop.innerHTML = `
-        <strong>${esc(s.name)}</strong>
-        <span class="pop-st ${s.status}">${cap(s.status)}</span><br>
-        <small>${s.free}/${s.total} free · ${s.power} kW · ₹${s.rate}/kWh</small>`;
+    // view switch
+    const setView = (map) => {
+      stationLayout.classList.toggle("map-mode", map);
+      stationLayout.classList.toggle("card-mode", !map);
+      cardViewBtn.classList.toggle("active", !map);
+      mapViewBtn.classList.toggle("active", map);
+      cardViewBtn.setAttribute("aria-pressed", String(!map));
+      mapViewBtn.setAttribute("aria-pressed", String(map));
     };
-    const hide = () => { pop.hidden = true; };
+    cardViewBtn.addEventListener("click", () => setView(false));
+    mapViewBtn.addEventListener("click", () => setView(true));
 
-    wrap.addEventListener("mouseover", (e) => { const n = e.target.closest(".map-node"); if (n) show(n); });
-    wrap.addEventListener("mouseout", (e) => { if (e.target.closest(".map-node")) hide(); });
-    wrap.addEventListener("focusin", (e) => { const n = e.target.closest(".map-node"); if (n) show(n); });
-    wrap.addEventListener("focusout", hide);
-
-    wrap.addEventListener("click", (e) => {
-      const node = e.target.closest(".map-node");
-      if (!node) return;
-      const s = byId(node.dataset.station);
-      show(node);
-
-      /* map-only view: reserve straight from the pin */
-      if (stationLayout?.classList.contains("map-mode")) {
-        if (s.status === "offline") return toast(`${s.name} is offline right now.`);
-        if (s.free === 0) return toast(`${s.name} is full — we'll notify you when a bay opens.`);
-        return openReserve(s.id);
-      }
-
-      /* card view: bring the card into focus */
-      if (!currentList.includes(s)) resetAllFilters();
-      const card = $(`.station-card[data-id="${s.id}"]`);
-      if (card) {
-        card.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
-        card.classList.remove("spotlight");
-        void card.offsetWidth;
-        card.classList.add("spotlight");
-      }
-    });
-  }
-
-  function initMapCar() {
-    const path = $("#mapRoute");
-    const car = $("#mapCar");
-    const map = $("#stationMap");
-    if (!path || !car || !map || !path.getTotalLength) return;
-
-    car.innerHTML = carSVG("mc");
-    const len = path.getTotalLength();
-    let W = map.clientWidth || 1;
-    let H = map.clientHeight || 1;
-    let visible = true;
-
-    window.addEventListener("resize", () => {
-      W = map.clientWidth || 1;
-      H = map.clientHeight || 1;
-    });
-
-    const place = (u, dir) => {
-      const p = path.getPointAtLength(u * len);
-      const q = path.getPointAtLength(clamp(u + 0.012 * dir) * len);
-      const dx = (q.x - p.x) * (W / 100);
-      const dy = (q.y - p.y) * (H / 100);
-      const flip = dx < 0;
-      const angle = (flip ? Math.atan2(dy, -dx) : Math.atan2(dy, dx)) * (180 / Math.PI);
-      car.style.left = `${p.x}%`;
-      car.style.top = `${p.y}%`;
-      car.style.transform = `translate(-50%,-65%) ${flip ? "scaleX(-1)" : ""} rotate(${angle.toFixed(1)}deg)`;
-    };
-
-    if (reduced) return place(0.3, 1);
-
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }).observe(map);
-    }
-
-    const loop = (t) => {
-      if (visible) {
-        const cycle = (t / 12000) % 2;
-        place(cycle < 1 ? cycle : 2 - cycle, cycle < 1 ? 1 : -1);
-      }
-      requestAnimationFrame(loop);
-    };
-    requestAnimationFrame(loop);
-  }
-
-  function initViewSwitcher() {
-    const set = (mode) => {
-      const map = mode === "map";
-      stationLayout?.classList.toggle("map-mode", map);
-      stationLayout?.classList.toggle("card-mode", !map);
-      cardViewBtn?.classList.toggle("active", !map);
-      mapViewBtn?.classList.toggle("active", map);
-      cardViewBtn?.setAttribute("aria-pressed", String(!map));
-      mapViewBtn?.setAttribute("aria-pressed", String(map));
-    };
-    cardViewBtn?.addEventListener("click", () => set("card"));
-    mapViewBtn?.addEventListener("click", () => set("map"));
-  }
-
-
-  /* =======================================================
-     RESERVATION DIALOG
-  ======================================================= */
-
-  const fmtTime = (d) => d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-
-  function openReserve(id) {
-    const s = byId(id);
-    const body = $("#reserveBody");
-    if (!s || !body || !dialog) return;
-
-    const now = Date.now();
-    const slots = [0, 30, 60, 120].map((m) => ({
-      m, label: m === 0 ? "Now" : fmtTime(new Date(now + m * 60000))
-    }));
-    let slot = slots[0];
-    let duration = 30;
-
-    body.innerHTML = `
-      <div class="rd-media">${stationArt(s)}</div>
-      <div class="rd-content">
-        <h3 id="reserveTitle">${esc(s.name)}</h3>
-        <p class="rd-area">${esc(s.area)} · ${esc(s.connector)} · ${s.power} kW · ₹${s.rate}/kWh</p>
-
-        <div class="rd-label">Arrival</div>
-        <div class="rd-slots" role="group" aria-label="Arrival time">
-          ${slots.map((o, i) => `<button type="button" class="slot-btn" data-slot="${i}" aria-pressed="${i === 0}">${o.label}</button>`).join("")}
-        </div>
-
-        <label class="rd-label" for="rdDur">Charging time · <b id="rdDurVal">30 min</b></label>
-        <input id="rdDur" class="rd-range" type="range" min="15" max="90" step="15" value="30">
-
-        <div class="rd-estimate">
-          <div><span>Energy</span><strong id="rdEnergy"></strong></div>
-          <div><span>Est. cost</span><strong id="rdCost"></strong></div>
-          <div><span>Battery</span><strong id="rdGain"></strong></div>
-        </div>
-        <div class="rd-bar"><span id="rdBar"></span></div>
-
-        <button class="primary-btn rd-confirm" id="rdConfirm" type="button">Reserve a bay</button>
-      </div>`;
-
-    const energyEl = $("#rdEnergy", body);
-    const costEl = $("#rdCost", body);
-    const gainEl = $("#rdGain", body);
-    const barEl = $("#rdBar", body);
-
-    const update = () => {
-      $("#rdDurVal", body).textContent = `${duration} min`;
-      const kwh = Math.min(s.power * (duration / 60) * 0.85, 60);
-      const gain = Math.min(100, (kwh / 60) * 100);
-      energyEl.textContent = `${kwh.toFixed(0)} kWh`;
-      costEl.textContent = `₹${Math.round(kwh * s.rate)}`;
-      gainEl.textContent = `+${gain.toFixed(0)}%`;
-      barEl.style.width = `${gain}%`;
-    };
-    update();
-
-    $$(".slot-btn", body).forEach((btn) => {
-      btn.addEventListener("click", () => {
-        slot = slots[Number(btn.dataset.slot)];
-        $$(".slot-btn", body).forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-      });
-    });
-
-    $("#rdDur", body).addEventListener("input", (e) => {
-      duration = Number(e.target.value);
-      update();
-    });
-
-    $("#rdConfirm", body).addEventListener("click", () => {
-      const code = `VLT-${Math.random().toString(16).slice(2, 6).toUpperCase()}`;
-      const bookings = store.get("voltiva-bookings", []);
-      bookings.push({ code, station: s.id, at: slot.label, minutes: duration });
-      store.set("voltiva-bookings", bookings.slice(-20));
-
-      if (s.free > 0) {
-        s.free -= 1;
-        if (s.free === 0) s.status = "busy";
-        refreshLive(s);
-      }
-
-      body.innerHTML = `
-        <div class="rd-success">
-          <svg viewBox="0 0 52 52" class="rd-check" aria-hidden="true">
-            <circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 14-16"/>
-          </svg>
-          <h3 id="reserveTitle">Bay reserved</h3>
-          <p>${esc(s.name)} · ${slot.label} · ${duration} min</p>
-          <div class="rd-code">${code}</div>
-          <button class="primary-btn" id="rdDone" type="button">Done</button>
-        </div>`;
-      $("#rdDone", body).addEventListener("click", () => closeDialog());
-    });
-
-    if (typeof dialog.showModal === "function") dialog.showModal();
-    else dialog.setAttribute("open", "");
-    document.documentElement.classList.add("dialog-open");
-  }
-
-  function closeDialog() {
-    if (typeof dialog.close === "function") dialog.close();
-    else dialog.removeAttribute("open");
-    document.documentElement.classList.remove("dialog-open");
-  }
-
-  function initDialog() {
-    if (!dialog) return;
-    $("#dialogClose")?.addEventListener("click", closeDialog);
-    dialog.addEventListener("click", (e) => { if (e.target === dialog) closeDialog(); });
-    dialog.addEventListener("close", () => document.documentElement.classList.remove("dialog-open"));
-  }
-
-
-  /* =======================================================
-     LOCATION
-  ======================================================= */
-
-  function initLocation() {
-    const button = $("#locateBtn");
-    if (!button) return;
-
-    const CHENNAI_CENTRAL = { lat: 13.0827, lng: 80.2707 };
-
-    const apply = (pos, approximate) => {
-      state.user = pos;
-      stations.forEach((s) => { s.distance = haversine(pos, s); });
-      state.sort = "nearest";
-      if (sortFilter) sortFilter.value = "nearest";
-      applyFilters();
-
-      const nearest = stations
-        .filter((s) => s.status !== "offline")
-        .sort((a, b) => a.distance - b.distance)[0];
-      toast(approximate
-        ? `Couldn't read your location, so distances are from Chennai Central. Nearest: ${nearest.name}.`
-        : `Nearest open station: ${nearest.name}, ${nearest.distance.toFixed(1)} km away.`);
-      $("#findStations")?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
-    };
-
-    button.addEventListener("click", () => {
-      if (!navigator.geolocation) return apply(CHENNAI_CENTRAL, true);
-
-      button.classList.add("loading");
+    // near me
+    const btn = $("#locateBtn");
+    btn?.addEventListener("click", () => {
+      const done = (loc, msg) => {
+        state.user = loc;
+        btn.classList.remove("loading");
+        sortFilter.value = "nearest";
+        render();
+        toast(msg);
+      };
+      if (!navigator.geolocation) return done(CITY, "Location unavailable, using central Chennai");
+      btn.classList.add("loading");
       navigator.geolocation.getCurrentPosition(
-        (p) => {
-          button.classList.remove("loading");
-          apply({ lat: p.coords.latitude, lng: p.coords.longitude }, false);
-        },
-        () => {
-          button.classList.remove("loading");
-          apply(CHENNAI_CENTRAL, true);
-        },
+        (p) => done({ lat: p.coords.latitude, lng: p.coords.longitude }, "Sorted by distance from you"),
+        () => done(CITY, "Location blocked, using central Chennai"),
         { timeout: 8000 }
       );
     });
@@ -891,569 +599,438 @@
 
 
   /* =======================================================
-     HERO CHARGING SCENE
+     MAP
   ======================================================= */
 
-  function buildHeroScene() {
-    const el = $("#heroScene");
-    if (!el) return;
+  function initMap() {
+    const map = $("#stationMap");
+    const pop = $("#mapPop");
+    if (!map) return;
 
-    el.innerHTML = `
-      <div class="hs-glow"></div>
-      <div class="energy-rings"><span></span><span></span><span></span></div>
+    $("#mapNodes").innerHTML = stations.map((s) => `
+      <button class="map-node ${s.status}" type="button" data-id="${s.id}" style="left:${s.map.x}%;top:${s.map.y}%" aria-label="${esc(s.name)}, ${s.status}"><span></span></button>
+      <span class="map-label" style="left:${s.map.x}%;top:calc(${s.map.y}% + 22px)">${esc(s.name)}</span>`).join("");
 
-      <svg class="hs-svg" viewBox="0 0 560 380" aria-hidden="true">
-        <rect class="hs-road" x="-30" y="322" width="620" height="34" rx="17"/>
-        <line class="hs-dash" x1="-30" y1="339" x2="590" y2="339"/>
+    map.addEventListener("click", (e) => {
+      const node = e.target.closest(".map-node");
+      if (!node) { pop.hidden = true; return; }
+      const s = byId(node.dataset.id);
+      pop.innerHTML = `<strong>${esc(s.name)}</strong><span class="pop-st ${s.status}">${cap(s.status)}</span><br><small>${s.free}/${s.total} bays · ${s.power} kW · ₹${s.rate}/kWh</small>`;
+      pop.style.left = s.map.x + "%";
+      pop.style.top = s.map.y + "%";
+      pop.hidden = false;
+      const card = $(`.station-card[data-id="${s.id}"]`);
+      if (card && stationLayout.classList.contains("card-mode")) {
+        card.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
+        card.classList.add("spotlight");
+        setTimeout(() => card.classList.remove("spotlight"), 1700);
+      }
+    });
 
-        <!-- canopy -->
-        <polygon points="236,84 548,72 556,98 228,112" fill="url(#sv-solar)"/>
-        <rect x="228" y="110" width="328" height="5" rx="2" class="art-fascia"/>
-        <path d="M244 118L214 326H530L516 118Z" fill="url(#sv-beam)" opacity=".75"/>
-        <rect x="236" y="112" width="8" height="216" rx="3" class="art-post"/>
-        <rect x="534" y="104" width="8" height="224" rx="3" class="art-post"/>
-
-        <!-- charger -->
-        <rect x="440" y="130" width="62" height="200" rx="16" fill="url(#sv-pylon)" stroke="rgba(182,240,53,.4)"/>
-        <rect x="452" y="146" width="38" height="58" rx="8" class="hs-screen"/>
-        <text x="471" y="182" text-anchor="middle" font-size="26">⚡</text>
-        <text x="471" y="197" text-anchor="middle" class="hs-screen-t">60 kW</text>
-        <circle cx="471" cy="226" r="5" class="hs-led"/>
-        <rect x="432" y="326" width="78" height="8" rx="4" fill="#1c2a24"/>
-
-        <!-- car rolls in, then plugs in -->
-        <g class="hs-car">${carSVG("hc", { attrs: 'x="120" y="233" width="300" height="110"' })}</g>
-
-        <path class="hs-cable" d="M440 285C428 322 396 320 378 294"/>
-        <path class="hs-cable-flow" d="M440 285C428 322 396 320 378 294"/>
-
-        <text class="hs-bolt b1" x="330" y="236">⚡</text>
-        <text class="hs-bolt b2" x="372" y="228">⚡</text>
-        <text class="hs-bolt b3" x="296" y="232">⚡</text>
-      </svg>
-
-      <div class="hs-chip hs-batt">
-        <span>Battery</span>
-        <strong id="hsPct">18%</strong>
-        <div class="hs-bar"><i id="hsBar"></i></div>
-      </div>
-      <div class="hs-chip hs-price">
-        <span>Fast charge</span>
-        <strong>₹18 / kWh</strong>
-      </div>`;
-
-    const pct = $("#hsPct");
-    const bar = $("#hsBar");
-    const setBattery = (v) => {
-      pct.textContent = `${Math.round(v)}%`;
-      bar.style.width = `${v}%`;
+    // car drives along the route
+    const carBox = $("#mapCar");
+    const path = $("#mapRoute");
+    if (!carBox || !path || reduced) return;
+    carBox.innerHTML = carSVG("mc");
+    const len = path.getTotalLength();
+    const loop = (t) => {
+      const k = ((t / 45000) % 1) * len;
+      const a = path.getPointAtLength(k);
+      const b = path.getPointAtLength((k + 1) % len);
+      const W = map.clientWidth, H = map.clientHeight;
+      const flip = b.x < a.x ? -1 : 1;
+      carBox.style.transform = `translate(${(a.x / 100) * W - 23}px, ${(a.y / 100) * H - 14}px) scaleX(${flip})`;
+      requestAnimationFrame(loop);
     };
-    setBattery(18);
-
-    const start = () => {
-      el.classList.add("go");
-      if (reduced) return setBattery(82);
-
-      const delay = 3600;
-      const duration = 9000;
-      const t0 = performance.now() + delay;
-      const tick = (now) => {
-        const t = clamp((now - t0) / duration);
-        setBattery(lerp(18, 82, 1 - Math.pow(1 - t, 2)));
-        if (t < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-
-    heroStart = start;
+    requestAnimationFrame(loop);
   }
-
-  let heroStart = () => {};
 
 
   /* =======================================================
-     SCROLL JOURNEY — the car drives as you scroll
+     LIVE BAY UPDATES
+  ======================================================= */
+
+  function liveTick() {
+    const pool = stations.filter((s) => s.status !== "offline");
+    const s = pool[Math.floor(Math.random() * pool.length)];
+    if (!s) return;
+    s.free = clamp(s.free + (Math.random() < 0.5 ? -1 : 1), 0, s.total);
+    s.status = s.free === 0 ? "busy" : "available";
+
+    const card = $(`.station-card[data-id="${s.id}"]`);
+    if (card) {
+      const n = $(".js-free", card);
+      n.textContent = s.free;
+      n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash");
+      const st = $(".station-status", card);
+      st.className = `station-status ${s.status}`;
+      st.textContent = cap(s.status);
+      $(".station-progress span", card).style.setProperty("--charge", Math.round((s.free / s.total) * 100) + "%");
+      const rb = $(".reserve-btn", card);
+      rb.disabled = s.free === 0;
+      rb.textContent = s.free === 0 ? "Full" : "Reserve";
+    }
+    const node = $(`.map-node[data-id="${s.id}"]`);
+    if (node) node.className = `map-node ${s.status}${node.classList.contains("is-dim") ? " is-dim" : ""}`;
+  }
+
+
+  /* =======================================================
+     RESERVATION DIALOG
+  ======================================================= */
+
+  function openReserve(id) {
+    const s = byId(id);
+    if (!s || s.status === "offline" || s.free === 0 || !dialog) return;
+    const slots = ["Now", "+15 min", "+30 min", "+1 hr"];
+    let slot = 0, target = 80;
+    const body = $("#reserveBody");
+
+    body.innerHTML = `
+      <div class="rd-media">${stationArt(s)}</div>
+      <div class="rd-content">
+        <h3 id="reserveTitle">${esc(s.name)}</h3>
+        <p class="rd-area">${esc(s.area)} · ${s.connector} · ${s.power} kW</p>
+        <span class="rd-label">Arrival</span>
+        <div class="rd-slots">${slots.map((t, i) => `<button type="button" class="slot-btn" data-slot="${i}" aria-pressed="${i === 0}">${t}</button>`).join("")}</div>
+        <label class="rd-label" for="rdRange">Charge to <b id="rdTarget">${target}%</b></label>
+        <input class="rd-range" id="rdRange" type="range" min="30" max="100" step="5" value="${target}">
+        <div class="rd-bar"><span id="rdBar"></span></div>
+        <div class="rd-estimate">
+          <div><span>Time</span><strong id="rdTime"></strong></div>
+          <div><span>Energy</span><strong id="rdKwh"></strong></div>
+          <div><span>Cost</span><strong id="rdCost"></strong></div>
+        </div>
+        <button class="primary-btn rd-confirm" id="rdConfirm" type="button" style="margin-top:20px">Confirm reservation</button>
+      </div>`;
+
+    const update = () => {
+      const kwh = (60 * (target - 20)) / 100;
+      const mins = Math.max(5, Math.round((kwh / s.power) * 60));
+      $("#rdTarget").textContent = target + "%";
+      $("#rdBar").style.width = target + "%";
+      $("#rdTime").textContent = mins + " min";
+      $("#rdKwh").textContent = kwh.toFixed(0) + " kWh";
+      $("#rdCost").textContent = "₹" + Math.round(kwh * s.rate);
+    };
+    update();
+
+    $("#rdRange").addEventListener("input", (e) => { target = +e.target.value; update(); });
+    $$(".slot-btn", body).forEach((b) => b.addEventListener("click", () => {
+      slot = +b.dataset.slot;
+      $$(".slot-btn", body).forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    }));
+
+    $("#rdConfirm").addEventListener("click", () => {
+      const code = "VLT-" + Math.random().toString(36).slice(2, 6).toUpperCase();
+      s.free = Math.max(0, s.free - 1);
+      if (s.free === 0) s.status = "busy";
+      body.innerHTML = `
+        <div class="rd-success">
+          <svg class="rd-check" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="24"/><path d="M20 33l8 8 16-17"/></svg>
+          <h3>Bay reserved</h3>
+          <p>${esc(s.name)} · arrive ${slots[slot].toLowerCase()}</p>
+          <span class="rd-code">${code}</span><br>
+          <button class="primary-btn" id="rdDone" type="button">Done</button>
+        </div>`;
+      $("#rdDone").addEventListener("click", () => dialog.close());
+      render();
+      toast("Reservation confirmed");
+    });
+
+    dialog.showModal();
+    root.classList.add("dialog-open");
+  }
+
+  function initDialog() {
+    if (!dialog) return;
+    $("#dialogClose")?.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
+    dialog.addEventListener("close", () => root.classList.remove("dialog-open"));
+  }
+
+
+  /* =======================================================
+     HERO SCENE
+  ======================================================= */
+
+  function initHeroScene() {
+    const scene = $("#heroScene");
+    if (!scene) return;
+    scene.innerHTML = `
+      <div class="hs-glow"></div>
+      <div class="energy-rings"><span></span><span></span><span></span></div>
+      <svg class="hs-svg" viewBox="0 0 560 380" aria-hidden="true">
+        <rect class="hs-road" x="0" y="262" width="560" height="64" rx="12"/>
+        <line class="hs-dash" x1="0" y1="294" x2="560" y2="294"/>
+        <rect class="hs-screen" x="392" y="140" width="48" height="126" rx="12"/>
+        <rect x="402" y="152" width="28" height="26" rx="5" fill="#0b1a14"/>
+        <text class="hs-screen-t" x="416" y="169" text-anchor="middle">60kW</text>
+        <circle class="hs-led" cx="416" cy="196" r="4"/>
+        <g class="hs-car">${carSVG("hs", { attrs: 'x="40" y="190" width="300" height="110"' })}</g>
+        <path class="hs-cable" d="M297 250C330 278 362 270 394 236"/>
+        <path class="hs-cable-flow" d="M297 250C330 278 362 270 394 236"/>
+        <text class="hs-bolt" x="330" y="236">⚡</text>
+        <text class="hs-bolt b2" x="352" y="236">⚡</text>
+        <text class="hs-bolt b3" x="310" y="236">⚡</text>
+      </svg>
+      <div class="hs-chip hs-batt"><span>Battery</span><strong id="heroPct">18%</strong><div class="hs-bar"><i id="heroBar"></i></div></div>
+      <div class="hs-chip hs-price"><span>Rate</span><strong>₹18 /kWh</strong></div>`;
+
+    if (reduced) { scene.classList.add("go"); return; }
+    setTimeout(() => scene.classList.add("go"), 400);
+
+    let pct = 18;
+    setInterval(() => {
+      if (!scene.classList.contains("go")) return;
+      pct = pct >= 100 ? 18 : pct + 2;
+      $("#heroPct").textContent = pct + "%";
+      $("#heroBar").style.width = pct + "%";
+    }, 700);
+  }
+
+
+  /* =======================================================
+     SCROLL JOURNEY
   ======================================================= */
 
   function initJourney() {
-    const section = $("#journey");
     const svg = $("#journeySvg");
-    if (!section || !svg) return null;
+    const stage = $("#journeyStage");
+    if (!svg || !stage) return () => {};
 
-    const H = 520;
-    const VW_MAX = 1500;
-    const TRAVEL = 2400;
-    const ROAD = 400;
-    const STATION_X = 1500;
-    const DEST_X = 3250;
-    const PARK = (STATION_X - 520) / TRAVEL;
-    const rand = rng(77);
+    const r = rng(11);
+    const f = (n) => n.toFixed(1);
+    let far = "", city = "", palms = "", stars = "";
 
-    /* ---------- procedural layers ---------- */
-    const farW = VW_MAX + TRAVEL * 0.12 + 40;
-    let far = `M0 ${H}`;
-    for (let x = 0; x <= farW; x += 45) {
-      const y = 300 - 70 * (Math.sin(x / 210) * 0.5 + 0.5) - 40 * (Math.sin(x / 97 + 2) * 0.5 + 0.5) - rand() * 14;
-      far += ` L${x} ${y.toFixed(1)}`;
+    for (let x = 0; x < 3600; ) {
+      const w = 30 + r() * 50, h = 40 + r() * 110;
+      far += `<rect x="${f(x)}" y="${f(380 - h)}" width="${f(w)}" height="${f(h)}" class="j-far"/>`;
+      x += w + 4 + r() * 10;
     }
-    far += ` L${farW} ${H}Z`;
-
-    const midW = VW_MAX + TRAVEL * 0.35 + 40;
-    let city = "";
-    let lights = "";
-    for (let x = 0; x < midW;) {
-      const w = 36 + rand() * 50;
-      const h = 70 + rand() * 150;
-      const rect = `x="${x.toFixed(0)}" y="${(ROAD - h).toFixed(0)}" width="${w.toFixed(0)}" height="${h.toFixed(0)}"`;
-      city += `<rect ${rect}/>`;
-      lights += `<rect ${rect} fill="url(#jWin)"/>`;
-      x += w + rand() * 8;
+    for (let x = 0; x < 3600; ) {
+      const w = 40 + r() * 60, h = 60 + r() * 120;
+      city += `<rect x="${f(x)}" y="${f(400 - h)}" width="${f(w)}" height="${f(h)}" class="j-city"/>`;
+      x += w + 10 + r() * 30;
     }
-
-    const palm = (x, h, lean) => {
-      const frond = (a, mirror) =>
-        `<path transform="${mirror ? "scale(-1 1) " : ""}rotate(${a})" d="M0 0Q30 -24 68 5Q34 -6 0 5Z"/>`;
-      return `<g transform="translate(${x.toFixed(0)} ${ROAD + 4})">
-        <path d="M0 0Q${lean * 0.4} ${-h * 0.5} ${lean} ${-h}" class="j-trunk"/>
-        <g transform="translate(${lean} ${-h})" class="j-frond">
-          ${frond(-48, false)}${frond(-16, false)}${frond(16, false)}
-          ${frond(-48, true)}${frond(-16, true)}${frond(16, true)}
-          <path d="M0 0Q-4 -34 6 -52Q8 -30 0 0Z"/>
-        </g></g>`;
-    };
-    const trW = VW_MAX + TRAVEL * 0.65 + 60;
-    let palms = "";
-    for (let x = 60; x < trW; x += 150 + rand() * 160) {
-      palms += palm(x, 110 + rand() * 70, (rand() - 0.5) * 30);
+    [380, 880, 1180, 2050, 2450, 2750, 3050].forEach((px) => {
+      palms += `<path d="M${px} 400C${px + 6} 340 ${px - 4} 300 ${px + 8} 262" class="j-trunk"/>
+        <path d="M${px + 8} 262q-40 -22 -66 12q34 -16 66 -12z M${px + 8} 262q40 -22 66 12q-34 -16 -66 -12z M${px + 8} 262q-6 -34 -30 -42q16 22 30 42z M${px + 8} 262q6 -34 30 -42q-16 22 -30 42z" class="j-frond"/>`;
+    });
+    for (let i = 0; i < 34; i++) {
+      stars += `<circle cx="${f(r() * 1200)}" cy="${f(r() * 250)}" r="${f(0.7 + r() * 1.2)}" class="j-star" style="animation-delay:${f(r() * 3)}s"/>`;
     }
-
-    let poles = "";
-    let glows = "";
-    for (let i = 0; i < 11; i++) {
-      const x = 260 + i * 340;
-      poles += `<g transform="translate(${x} 0)"><rect x="-2" y="290" width="4" height="110" class="j-pole"/><rect x="-2" y="290" width="26" height="4" class="j-pole"/><circle cx="22" cy="297" r="3.5" fill="#fff3c4"/></g>`;
-      glows += `<circle cx="${x + 22}" cy="300" r="46" fill="url(#jGlow)"/>`;
-    }
-
-    const sign = (x, a, b) => `
-      <g transform="translate(${x} 0)">
-        <rect x="-2" y="318" width="4" height="82" class="j-pole"/>
-        <rect x="-64" y="266" width="128" height="56" rx="9" class="j-sign"/>
-        <text x="0" y="291" text-anchor="middle" class="j-sign-a">${a}</text>
-        <text x="0" y="312" text-anchor="middle" class="j-sign-b">${b}</text>
-      </g>`;
-
-    const stationG = `
-      <g transform="translate(${STATION_X} 0)">
-        <polygon points="-345,238 135,226 152,262 -362,270" fill="url(#sv-solar)"/>
-        <rect x="-362" y="268" width="514" height="22" rx="5" class="j-fascia"/>
-        <text x="-105" y="284" text-anchor="middle" class="j-fascia-t">VOLTIVA · FAST CHARGE</text>
-        <rect x="-356" y="290" width="502" height="3" class="j-lightbar"/>
-        <path id="jBeam" d="M-340 293L-396 400H190L136 293Z" fill="url(#sv-beam)"/>
-        <rect x="-336" y="293" width="10" height="107" class="j-post"/>
-        <rect x="124" y="293" width="10" height="107" class="j-post"/>
-
-        <rect x="0" y="300" width="50" height="100" rx="12" fill="url(#sv-pylon)" class="j-pylon"/>
-        <rect x="8" y="312" width="34" height="38" rx="6" fill="#06120b"/>
-        <text x="25" y="338" text-anchor="middle" font-size="22">⚡</text>
-        <circle id="jLed" cx="25" cy="364" r="5" class="j-led"/>
-        <text x="25" y="387" text-anchor="middle" class="j-pylon-t">60 kW</text>
-
-        <rect x="72" y="300" width="50" height="100" rx="12" fill="url(#sv-pylon)" class="j-pylon"/>
-        <rect x="80" y="312" width="34" height="38" rx="6" fill="#06120b"/>
-        <circle cx="97" cy="364" r="5" class="j-led idle"/>
-        <text x="97" y="387" text-anchor="middle" class="j-pylon-t">Free</text>
-
-        <path id="jCable" class="j-cable" d="M0 362C-22 404 -52 396 -65 375"/>
-        <path id="jCableFlow" class="j-cable-flow" d="M0 362C-22 404 -52 396 -65 375"/>
-
-        <rect x="213" y="250" width="8" height="150" class="j-post"/>
-        <rect x="177" y="196" width="80" height="86" rx="12" class="j-totem"/>
-        <text x="217" y="244" text-anchor="middle" font-size="34">⚡</text>
-        <text x="217" y="268" text-anchor="middle" class="j-totem-t">VOLTIVA</text>
-      </g>`;
-
-    const destG = `
-      <g transform="translate(${DEST_X} 0)">
-        <polygon points="-22,170 22,170 34,400 -34,400" class="j-lh"/>
-        <polygon points="-25,230 25,230 27,262 -27,262" class="j-lh-red"/>
-        <polygon points="-29,310 29,310 31,342 -31,342" class="j-lh-red"/>
-        <rect x="-26" y="140" width="52" height="30" rx="4" class="j-lh-room"/>
-        <polygon points="-32,140 0,112 32,140" class="j-lh-roof"/>
-        <g id="jLhBeam"><polygon points="0,155 560,96 560,214" class="j-lh-beam"/><polygon points="0,155 -560,96 -560,214" class="j-lh-beam"/></g>
-        ${palm(-150, 120, 14)}${palm(150, 100, -12)}${palm(215, 135, 18)}
-      </g>`;
 
     svg.innerHTML = `
-      <defs>
-        <linearGradient id="jSky" x1="0" y1="0" x2="0" y2="1">
-          <stop id="jSkyTop" offset="0" stop-color="#2b1b4d"/>
-          <stop id="jSkyBot" offset="1" stop-color="#ff8a5c"/>
-        </linearGradient>
-        <pattern id="jWin" width="16" height="18" patternUnits="userSpaceOnUse">
-          <rect x="5" y="5" width="5" height="7" fill="#ffd98a"/>
-        </pattern>
-        <radialGradient id="jGlow">
-          <stop offset="0" stop-color="#ffe9a6" stop-opacity=".55"/>
-          <stop offset="1" stop-color="#ffe9a6" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-
-      <rect x="-300" y="0" width="2200" height="${H}" fill="url(#jSky)"/>
-      <g id="jStars"></g>
-      <circle id="jSun" r="46" fill="#ffd9a0"/>
-      <circle id="jMoon" r="26" fill="#eef6ff"/>
-
-      <g id="jFar"><path d="${far}" class="j-far"/></g>
-      <g id="jMid"><g class="j-city">${city}</g><g id="jLights">${lights}</g></g>
-      <g id="jTrees" class="j-palms">${palms}</g>
+      <rect width="1200" height="520" fill="url(#sky-dusk)"/>
+      <rect id="jNight" width="1200" height="520" fill="url(#sky-night)" opacity="0"/>
+      <rect id="jDawn" width="1200" height="520" fill="url(#sky-dawn)" opacity="0"/>
+      <g id="jStars" opacity="0">${stars}</g>
+      <circle id="jSun" cx="900" cy="330" r="46" fill="#ffcf8a" opacity="0"/>
+      <g id="jFar">${far}</g>
+      <g id="jCity">${city}</g>
+      <g id="jPalms">${palms}</g>
+      <rect class="j-road" x="0" y="396" width="1200" height="124"/>
+      <rect class="j-curb" x="0" y="392" width="1200" height="6"/>
+      <line id="jLane" class="j-lane" x1="0" y1="458" x2="1200" y2="458"/>
 
       <g id="jWorld">
-        <rect x="0" y="${ROAD}" width="3900" height="${H - ROAD + 40}" class="j-road"/>
-        <rect x="0" y="${ROAD}" width="3900" height="8" class="j-curb"/>
-        <line x1="0" y1="466" x2="3900" y2="466" class="j-lane"/>
-        <g id="jGlows">${glows}</g>
-        ${poles}
-        ${sign(700, "⚡ Voltiva", "2 km")}
-        ${sign(1180, "⚡ Voltiva", "300 m")}
-        ${sign(2800, "Marina Beach", "4 km")}
-        ${stationG}
-        ${destG}
+        <rect class="j-pole" x="696" y="300" width="6" height="96"/>
+        <rect class="j-sign" x="640" y="290" width="150" height="46" rx="8"/>
+        <text class="j-sign-a" x="715" y="311" text-anchor="middle">Voltiva</text>
+        <text class="j-sign-b" x="715" y="328" text-anchor="middle">fast charge 2 km</text>
+
+        <rect class="j-totem" x="1235" y="290" width="76" height="106" rx="10"/>
+        <text class="j-totem-t" x="1273" y="346" text-anchor="middle">VOLT</text>
+
+        <path d="M1400 268L1380 392H1780L1760 268Z" fill="rgba(234,255,184,.08)"/>
+        <rect class="j-post" x="1390" y="266" width="8" height="130"/>
+        <rect class="j-post" x="1770" y="266" width="8" height="130"/>
+        <rect class="j-fascia" x="1380" y="250" width="410" height="18" rx="4"/>
+        <text class="j-fascia-t" x="1585" y="264" text-anchor="middle">VOLTIVA</text>
+        <rect class="j-lightbar" x="1392" y="268" width="386" height="4" rx="2"/>
+        <rect class="j-pylon" x="1700" y="322" width="44" height="96" rx="10" fill="url(#sv-pylon)"/>
+        <text class="j-pylon-t" x="1722" y="346" text-anchor="middle">DC 120</text>
+        <circle id="jLed" class="j-led idle" cx="1722" cy="366" r="5"/>
+        <g class="j-aura"><ellipse cx="1500" cy="385" rx="190" ry="70"/><ellipse cx="1500" cy="385" rx="190" ry="70" style="animation-delay:.8s"/></g>
+
+        <rect class="j-lh" x="3300" y="190" width="40" height="206"/>
+        <rect class="j-lh-red" x="3300" y="240" width="40" height="30"/>
+        <rect class="j-lh-red" x="3300" y="310" width="40" height="30"/>
+        <rect class="j-lh-room" x="3306" y="164" width="28" height="26"/>
+        <path class="j-lh-roof" d="M3298 164L3320 140L3342 164Z"/>
+        <path class="j-lh-beam" d="M3306 176L2900 130V222Z"/>
       </g>
 
-      <g id="jCar">${carSVG("jc", { attrs: 'x="230" y="322" width="262" height="96"' })}</g>
+      ${carSVG("jc", { attrs: 'x="300" y="335" width="250" height="92"' })}
 
-      <g class="j-aura">
-        <ellipse cx="361" cy="372" rx="120" ry="52"/>
-        <ellipse cx="361" cy="372" rx="120" ry="52" style="animation-delay:.8s"/>
-        <ellipse cx="361" cy="372" rx="120" ry="52" style="animation-delay:1.6s"/>
-      </g>
-      <g class="j-bolts">
-        <text x="300" y="350" class="j-bolt">⚡</text>
-        <text x="372" y="350" class="j-bolt" style="animation-delay:.7s">⚡</text>
-        <text x="436" y="350" class="j-bolt" style="animation-delay:1.4s">⚡</text>
+      <g id="jWorld2">
+        <path id="jCable" class="j-cable" d="M1700 392C1670 424 1640 414 1614 386" opacity="0"/>
+        <path class="j-cable-flow" d="M1700 392C1670 424 1640 414 1614 386"/>
+        <text class="j-bolt" x="1650" y="350">⚡</text>
+        <text class="j-bolt" x="1680" y="350" style="animation-delay:.7s">⚡</text>
       </g>`;
 
-    let starMarkup = "";
-    for (let i = 0; i < 46; i++) {
-      starMarkup += `<circle cx="${(-200 + rand() * 1900).toFixed(0)}" cy="${(rand() * 290).toFixed(0)}" r="${(0.7 + rand() * 1.4).toFixed(1)}" class="j-star" style="animation-delay:${(rand() * 3).toFixed(1)}s"/>`;
-    }
-    $("#jStars", svg).innerHTML = starMarkup;
-
-    /* ---------- element handles ---------- */
-    const g = (id) => $(`#${id}`, svg);
-    const el = {
-      top: g("jSkyTop"), bot: g("jSkyBot"), stars: g("jStars"),
-      sun: g("jSun"), moon: g("jMoon"),
-      far: g("jFar"), mid: g("jMid"), trees: g("jTrees"), world: g("jWorld"),
-      lights: g("jLights"), glows: g("jGlows"), beam: g("jBeam"), lh: g("jLhBeam"),
-      car: g("jCar"), led: g("jLed"), cable: g("jCable"), flow: g("jCableFlow")
-    };
-    const wheels = $$(".car-wheel", el.car).map((w) => ({ node: w, cx: Number(w.dataset.cx) }));
-    const headBeam = $(".car-beam", el.car);
-    const cableLen = el.cable.getTotalLength ? el.cable.getTotalLength() : 100;
-    el.cable.style.strokeDasharray = cableLen;
-    el.cable.style.strokeDashoffset = cableLen;
-
-    const stage = $("#journeyStage");
-    const hud = {
-      fill: $("#hudFill"), pct: $("#hudPct"), range: $("#hudRange"),
-      power: $("#hudPower"), status: $("#hudStatus"), bar: $("#journeyBar")
-    };
+    const g = (id) => svg.querySelector("#" + id);
+    const nodes = { far: g("jFar"), city: g("jCity"), palms: g("jPalms"), world: g("jWorld"), world2: g("jWorld2"),
+      night: g("jNight"), dawn: g("jDawn"), stars: g("jStars"), sun: g("jSun"), lane: g("jLane"), cable: g("jCable"), led: g("jLed") };
+    const wheels = $$(".car-wheel", svg);
+    const beam = $(".car-beam", svg);
+    const hud = { fill: $("#hudFill"), pct: $("#hudPct"), range: $("#hudRange"), power: $("#hudPower"), status: $("#hudStatus") };
     const steps = $$("#journeySteps li");
+    const bar = $("#journeyBar");
 
-    /* ---------- sky palette over the trip ---------- */
-    const PAL = [
-      [0, [43, 27, 77], [255, 138, 92], 0.15],
-      [0.3, [18, 26, 58], [104, 60, 122], 0.75],
-      [0.5, [5, 11, 26], [15, 42, 58], 1],
-      [0.7, [5, 11, 26], [15, 42, 58], 1],
-      [1, [28, 59, 107], [255, 179, 107], 0.1]
-    ];
-    const palette = (p) => {
-      for (let i = 0; i < PAL.length - 1; i++) {
-        const a = PAL[i];
-        const b = PAL[i + 1];
-        if (p <= b[0]) {
-          const t = (p - a[0]) / (b[0] - a[0]);
-          return {
-            top: a[1].map((c, k) => Math.round(lerp(c, b[1][k], t))),
-            bot: a[2].map((c, k) => Math.round(lerp(c, b[2][k], t))),
-            n: lerp(a[3], b[3], t)
-          };
-        }
-      }
-      const last = PAL[PAL.length - 1];
-      return { top: last[1], bot: last[2], n: last[3] };
-    };
+    const ease = (t) => 1 - Math.pow(1 - clamp(t), 1.8);
+    const smooth = (t) => { t = clamp(t); return t * t * (3 - 2 * t); };
+    const offsetAt = (p) => p < 0.4 ? 1100 * ease(p / 0.4) : p < 0.65 ? 1100 : 1100 + 1300 * ease((p - 0.65) / 0.35);
 
-    /* ---------- viewBox adapts to the stage shape ---------- */
-    const fit = () => {
-      const r = svg.getBoundingClientRect();
-      if (!r.width || !r.height) return;
-      const vw = clamp(H * (r.width / r.height), 520, VW_MAX);
-      const vx = clamp((1300 - vw) / 6, 0, 150);
-      svg.setAttribute("viewBox", `${vx.toFixed(0)} 0 ${vw.toFixed(0)} ${H}`);
-    };
-    fit();
-    window.addEventListener("resize", fit);
+    return function apply(p) {
+      const off = offsetAt(p);
+      const move = (el, k) => el.setAttribute("transform", `translate(${(-off * k).toFixed(1)} 0)`);
+      move(nodes.far, 0.25); move(nodes.city, 0.5); move(nodes.palms, 0.75);
+      move(nodes.world, 1); move(nodes.world2, 1);
+      nodes.lane.style.strokeDashoffset = off;
 
-    /* ---------- per-frame update ---------- */
-    let last = {};
-    const setText = (key, node, value) => {
-      if (last[key] !== value) { node.textContent = value; last[key] = value; }
-    };
+      const night = smooth((p - 0.15) / 0.3) * (1 - smooth((p - 0.6) / 0.2));
+      const dawn = smooth((p - 0.6) / 0.25);
+      nodes.night.setAttribute("opacity", smooth((p - 0.15) / 0.3));
+      nodes.dawn.setAttribute("opacity", dawn);
+      nodes.stars.setAttribute("opacity", night);
+      nodes.sun.setAttribute("opacity", dawn);
 
-    const update = (p) => {
-      /* world position: drive, park, drive */
-      let frac;
-      if (p < 0.4) {
-        const t = p / 0.4;
-        frac = PARK * (0.5 * t + 0.5 * (1 - (1 - t) * (1 - t)));
-      } else if (p < 0.7) {
-        frac = PARK;
-      } else {
-        const u = (p - 0.7) / 0.3;
-        frac = PARK + (1 - PARK) * (0.5 * u + 0.5 * u * u * (3 - 2 * u));
-      }
-      const dist = frac * TRAVEL;
-
-      el.far.setAttribute("transform", `translate(${(-dist * 0.12).toFixed(1)} 0)`);
-      el.mid.setAttribute("transform", `translate(${(-dist * 0.35).toFixed(1)} 0)`);
-      el.trees.setAttribute("transform", `translate(${(-dist * 0.65).toFixed(1)} 0)`);
-      el.world.setAttribute("transform", `translate(${(-dist).toFixed(1)} 0)`);
-
-      const spin = dist * 3.4;
-      wheels.forEach((w) => w.node.setAttribute("transform", `rotate(${spin.toFixed(1)} ${w.cx} 68)`));
-      el.car.setAttribute("transform", `translate(0 ${(Math.sin(dist / 26) * 0.9).toFixed(2)})`);
-
-      /* sky + night */
-      const pal = palette(p);
-      el.top.setAttribute("stop-color", `rgb(${pal.top})`);
-      el.bot.setAttribute("stop-color", `rgb(${pal.bot})`);
-      const n = pal.n;
-      el.stars.style.opacity = n;
-      el.lights.style.opacity = (n * 0.95).toFixed(2);
-      el.glows.style.opacity = n.toFixed(2);
-      el.beam.style.opacity = (0.15 + n * 0.85).toFixed(2);
-      el.lh.style.opacity = (n * 0.7).toFixed(2);
-      if (headBeam) headBeam.style.opacity = (n * 0.9).toFixed(2);
-
-      const sunT = p < 0.5 ? p / 0.5 : (p - 0.5) / 0.5;
-      el.sun.setAttribute("cx", p < 0.5 ? lerp(900, 800, sunT) : lerp(380, 300, sunT));
-      el.sun.setAttribute("cy", p < 0.5 ? lerp(215, 400, sunT) : lerp(400, 205, sunT));
-      el.sun.style.opacity = (1 - n).toFixed(2);
-      el.moon.setAttribute("cx", lerp(260, 900, p));
-      el.moon.setAttribute("cy", 90 + Math.sin(p * Math.PI) * -18);
-      el.moon.style.opacity = n.toFixed(2);
-
-      /* cable: draws on arrival, retracts before leaving */
-      const connect = clamp((p - 0.4) / 0.04) - clamp((p - 0.66) / 0.04);
-      el.cable.style.strokeDashoffset = (cableLen * (1 - clamp(connect))).toFixed(1);
-      const charging = p > 0.43 && p < 0.64;
+      const parked = p >= 0.4 && p <= 0.65;
+      const charging = p > 0.45 && p < 0.65;
       stage.classList.toggle("is-charging", charging);
-      el.led.classList.toggle("on", charging);
+      nodes.cable.setAttribute("opacity", charging ? 1 : 0);
+      nodes.led.classList.toggle("on", charging);
+      if (beam) beam.style.opacity = parked ? 0 : (night * 0.9).toFixed(2);
+      wheels.forEach((w) => w.setAttribute("transform", `rotate(${(off * 1.4) % 360} ${w.dataset.cx} 68)`));
 
-      /* battery model */
-      let battery;
-      let power = 0;
-      let status;
-      if (p < 0.4) {
-        battery = 100 - (p / 0.4) * 82;
-        status = battery > 45 ? "Cruising through Chennai"
-          : p < 0.34 ? "Battery getting low"
-          : "Voltiva station just ahead";
-      } else if (p < 0.7) {
-        const t = clamp((p - 0.42) / 0.22);
-        battery = lerp(18, 86, 1 - Math.pow(1 - t, 2));
-        if (p < 0.43) status = "Plugging in…";
-        else if (p < 0.64) {
-          power = Math.round(60 * Math.min(1, t * 5) * (t > 0.85 ? 1 - (t - 0.85) / 0.15 * 0.7 : 1));
-          status = `Fast charging · ${power} kW`;
-        } else status = "Charged · unplugging";
-      } else {
-        const u = (p - 0.7) / 0.3;
-        battery = lerp(86, 74, u);
-        status = p > 0.96 ? "Arrived · Marina Beach" : "Back on the road";
-      }
+      const pct = p < 0.4 ? lerp(24, 8, p / 0.4) : p < 0.65 ? lerp(8, 92, (p - 0.4) / 0.25) : lerp(92, 88, (p - 0.65) / 0.35);
+      hud.fill.style.width = pct + "%";
+      hud.fill.classList.toggle("low", pct < 15);
+      hud.pct.textContent = Math.round(pct) + "%";
+      hud.range.textContent = Math.round(pct * 4.2) + " km";
+      hud.power.textContent = charging ? Math.round(lerp(120, 60, (p - 0.45) / 0.2)) + " kW" : "0 kW";
 
-      hud.fill.style.width = `${battery.toFixed(1)}%`;
-      hud.fill.classList.toggle("low", battery < 25);
-      setText("pct", hud.pct, `${Math.round(battery)}%`);
-      setText("range", hud.range, `${Math.round(battery * 4.2)} km`);
-      setText("power", hud.power, `${power} kW`);
-      setText("status", hud.status, status);
-      hud.bar.style.width = `${(p * 100).toFixed(1)}%`;
-
-      const step = p < 0.3 ? 0 : p < 0.4 ? 1 : p < 0.7 ? 2 : 3;
-      if (last.step !== step) {
-        steps.forEach((li, i) => {
-          li.classList.toggle("active", i === step);
-          li.classList.toggle("done", i < step);
-        });
-        last.step = step;
-      }
-    };
-
-    update(0);
-
-    return () => {
-      const rect = section.getBoundingClientRect();
-      if (rect.bottom < -200 || rect.top > window.innerHeight + 200) return;
-      const total = rect.height - window.innerHeight;
-      update(total > 0 ? clamp(-rect.top / total) : 0);
+      const step = p < 0.2 ? 0 : p < 0.4 ? 1 : p < 0.65 ? 2 : 3;
+      hud.status.textContent = ["Low battery", "Arriving at Voltiva", "Fast charging", "Cruising"][step];
+      steps.forEach((li, i) => { li.classList.toggle("active", i === step); li.classList.toggle("done", i < step); });
+      bar.style.width = (p * 100).toFixed(1) + "%";
     };
   }
 
 
   /* =======================================================
-     SCROLL ENGINE
+     SCROLL EFFECTS (one rAF-throttled handler)
   ======================================================= */
 
-  function initScrollEffects() {
+  function initScroll() {
     const header = $("#siteHeader");
     const backTop = $("#backTop");
-    const heroScene = $("#heroScene");
-    const grid = $(".stations-grid");
     const road = $("#scrollRoad");
-    const roadCar = $("#roadCar");
-    const roadFill = $("#roadFill");
+    const journey = $("#journey");
     const cta = $("#ctaSection");
     const ctaCar = $("#ctaCar");
+    const hero = $("#heroScene");
+    const applyJourney = initJourney();
 
-    if (roadCar) roadCar.innerHTML = carSVG("rc");
+    const rc = $("#roadCar"); if (rc) rc.innerHTML = carSVG("rc");
     if (ctaCar) ctaCar.innerHTML = carSVG("cc");
-    const ctaWheels = ctaCar ? $$(".car-wheel", ctaCar) : [];
 
-    const journeyUpdate = initJourney();
-    let movingTimer;
-    let ticking = false;
+    let ticking = false, movingTimer;
 
-    const frame = () => {
+    const tick = () => {
       ticking = false;
       const y = window.scrollY;
-      const vh = window.innerHeight;
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
 
       header?.classList.toggle("scrolled", y > 30);
+      header?.classList.toggle("is-scrolled", y > 30);
       backTop?.classList.toggle("show", y > 500);
+      backTop?.classList.toggle("visible", y > 500);
 
-      /* scroll road: mini car drives along the bottom edge */
       if (road) {
-        const max = document.documentElement.scrollHeight - vh;
-        const p = max > 0 ? clamp(y / max) : 0;
-        road.style.setProperty("--p", p.toFixed(4));
+        road.style.setProperty("--p", clamp(y / max).toFixed(4));
         road.classList.add("moving");
         clearTimeout(movingTimer);
-        movingTimer = setTimeout(() => road.classList.remove("moving"), 180);
+        movingTimer = setTimeout(() => road.classList.remove("moving"), 160);
       }
 
-      /* hero parallax */
-      if (y < vh * 1.3) {
-        heroScene?.style.setProperty("--py", `${(y * 0.14).toFixed(1)}px`);
-        if (grid) grid.style.transform = `translateY(${(y * 0.18).toFixed(1)}px)`;
+      if (hero && !reduced && window.innerWidth > 700) hero.style.setProperty("--py", (-y * 0.06).toFixed(1) + "px");
+
+      if (journey) {
+        const r = journey.getBoundingClientRect();
+        applyJourney(clamp(-r.top / Math.max(1, r.height - window.innerHeight)));
       }
 
-      journeyUpdate?.();
-
-      /* CTA car: drives in from the left and docks at the charger */
       if (cta && ctaCar) {
-        const r = cta.getBoundingClientRect();
-        if (r.top < vh && r.bottom > 0) {
-          const t = clamp((vh - r.top) / (vh * 0.85));
-          const eased = 1 - Math.pow(1 - t, 2);
-          const width = cta.clientWidth;
-          const x = lerp(-180, width - 330, eased);
-          ctaCar.style.transform = `translateX(${x.toFixed(1)}px)`;
-          const spin = x * 3.1;
-          ctaWheels.forEach((w) => {
-            w.setAttribute("transform", `rotate(${spin.toFixed(1)} ${w.dataset.cx} 68)`);
-          });
-          cta.classList.toggle("docked", t > 0.97);
-        }
+        const rr = cta.getBoundingClientRect();
+        const t = clamp((window.innerHeight - rr.top - 60) / (Math.min(rr.height, window.innerHeight) * 0.9));
+        const roadW = $(".cta-road", cta).clientWidth;
+        const carW = ctaCar.offsetWidth || 170;
+        const stop = roadW - 146 - (carW * 224) / 262;
+        ctaCar.style.transform = `translateX(${lerp(-carW - 20, stop, 1 - Math.pow(1 - t, 2)).toFixed(1)}px)`;
+        cta.classList.toggle("docked", t >= 0.97);
       }
     };
 
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(frame);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    backTop?.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
-    });
-    frame();
+    const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(tick); } };
+    window.addEventListener("scroll", req, { passive: true });
+    window.addEventListener("resize", req);
+    backTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }));
+    tick();
   }
 
 
   /* =======================================================
-     COUNTERS
+     SMALL EXTRAS
   ======================================================= */
-
-  function animateNumber(element, target) {
-    const duration = 1300;
-    const start = performance.now();
-
-    const update = (time) => {
-      const progress = Math.min((time - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      element.textContent = Math.round(target * eased).toLocaleString();
-      if (progress < 1) requestAnimationFrame(update);
-    };
-    requestAnimationFrame(update);
-  }
 
   function initCounters() {
-    const counters = $$("[data-count]");
-    if (!counters.length) return;
-
-    if (!("IntersectionObserver" in window) || reduced) {
-      counters.forEach((c) => { c.textContent = Number(c.dataset.count).toLocaleString(); });
-      return;
-    }
-
-    const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        animateNumber(entry.target, Number(entry.target.dataset.count));
-        obs.unobserve(entry.target);
-      });
-    }, { threshold: 0.4 });
-
-    counters.forEach((c) => observer.observe(c));
-  }
-
-
-  /* =======================================================
-     TOAST + LOADER
-  ======================================================= */
-
-  function toast(message) {
-    const el = $("#toast");
-    if (!el) return;
-    el.textContent = message;
-    el.classList.add("show");
-    clearTimeout(window.voltivaToastTimer);
-    window.voltivaToastTimer = setTimeout(() => el.classList.remove("show"), 3200);
-  }
-
-  function initPageLoader() {
-    const loader = $("#pageLoader");
-
-    const done = () => {
-      setTimeout(() => {
-        loader?.classList.add("loaded");
-        setTimeout(heroStart, 250);
-      }, 500);
+    const run = (el) => {
+      const end = +el.dataset.count;
+      if (reduced) { el.textContent = end; return; }
+      const t0 = performance.now();
+      const step = (t) => {
+        const k = clamp((t - t0) / 1400);
+        el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
     };
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { run(e.target); io.unobserve(e.target); }
+    }), { threshold: 0.4 });
+    $$("[data-count]").forEach((el) => io.observe(el));
+  }
 
-    if (document.readyState === "complete") done();
-    else window.addEventListener("load", done, { once: true });
+  function initMagnetic() {
+    if (!finePointer || reduced) return;
+    $$(".magnetic-btn").forEach((b) => {
+      b.addEventListener("pointermove", (e) => {
+        const r = b.getBoundingClientRect();
+        b.style.translate = `${(e.clientX - r.left - r.width / 2) * 0.18}px ${(e.clientY - r.top - r.height / 2) * 0.25}px`;
+      });
+      b.addEventListener("pointerleave", () => { b.style.translate = ""; });
+    });
+  }
 
-    /* safety net if the load event is slow */
-    setTimeout(() => $("#heroScene")?.classList.add("go"), 3500);
+  function hideLoader() {
+    const l = $("#pageLoader");
+    if (!l) return;
+    l.classList.add("hide", "hidden", "loaded", "is-hidden");
+    l.style.opacity = "0";
+    l.style.visibility = "hidden";
+    l.style.pointerEvents = "none";
+  }
+
+  function initVideo() {
+    const v = $(".hero-video");
+    if (!v) return;
+    const saveData = navigator.connection && navigator.connection.saveData;
+    if (reduced || saveData) { v.pause(); v.style.display = "none"; return; }
+    document.addEventListener("visibilitychange", () => (document.hidden ? v.pause() : v.play().catch(() => {})));
   }
 
 
@@ -1462,22 +1039,25 @@
   ======================================================= */
 
   function init() {
-    buildHeroScene();
-    buildMap();
-    initMapCar();
-    renderStations(stations);
+    initTheme();
+    initRTL();
+    initMobileMenu();
+    initMap();
     initFilters();
-    initCardEvents();
-    initViewSwitcher();
     initDialog();
+    render();
+    initHeroScene();
+    initScroll();
     initCounters();
-    initLocation();
-    initScrollEffects();
-    initPageLoader();
-    initLiveTicker();
+    initMagnetic();
+    initVideo();
+    if (!reduced) setInterval(liveTick, 6000);
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
-  else init();
+  // Safe start: even if one feature throws, the loader still goes away.
+  try { init(); } catch (err) { console.error("Voltiva stations init failed:", err); }
+  if (document.readyState === "complete") hideLoader();
+  else window.addEventListener("load", hideLoader);
+  setTimeout(hideLoader, 3500);
 
 })();

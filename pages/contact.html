@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="description"
+    content="Contact Voltiva - EV charging stations, reservations and support."
+  >
+
+  <title>Contact Us | Voltiva</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+  <!-- Contact CSS -->
+    
+  <link rel="stylesheet" href="../assets/css/contact.css">
+ <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- Prevent theme / RTL flash -->
+  <script>
+    (() => {
+      const theme = localStorage.getItem("voltiva-theme");
+      const direction = localStorage.getItem("voltiva-direction");
+
+      if (theme === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+
+      document.documentElement.setAttribute(
+        "dir",
+        direction === "rtl" ? "rtl" : "ltr"
+      );
+    })();
+  </script>
+</head>
+
+<body>
+
+  <!-- =========================================
+       PAGE LOADER
+  ========================================== -->
+
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-logo">
+      <span class="loader-bolt">⚡</span>
+    </div>
+
+    <div class="loader-line">
+      <span></span>
+    </div>
+
+    <p>Charging your experience...</p>
+  </div>
+
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+   <header class="site-header" id="siteHeader">
+
+    <a class="brand" href="../index.html" aria-label="Voltiva home">
+      <img
+        src="../assets/images/lightening-svgrepo-com.svg"
+        width="40"
+        height="40"
+        alt="Voltiva"
+      >
+
+      <span>
+        voltiva<span class="brand-dot">.</span>
+      </span>
+    </a>
+
+
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+
+      <a class="nav-link" href="../index.html">
+        Home
+      </a>
+
+      <a class="nav-link" href="home2.html">
+        Home 2
+      </a>
+
+      <a class="nav-link" href="about.html">
+        About
+      </a>
+
+      <a class="nav-link" href="stations.html">
+        Stations
+      </a>
+
+      <a class="nav-link" href="services.html">
+        Services
+      </a>
+
+      <a class="nav-link" href="blog.html">
+        Blog
+      </a>
+
+      <a class="nav-link " href="faq.html">
+        FAQ
+      </a>
+
+      <a class="nav-link active" href="contact.html">
+        Contact
+      </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+      <button
+        class="icon-btn"
+        id="themeToggle"
+        type="button"
+        aria-label="Toggle theme"
+      >
+        ☾
+      </button>
+
+      <button
+        class="rtl-btn"
+        id="rtlToggle"
+        type="button"
+        aria-label="Toggle RTL"
+        aria-pressed="false"
+      >
+        RTL
+      </button>
+
+      <button
+        class="profile-btn"
+        type="button"
+        aria-label="Account"
+      >
+        <span class="profile-avatar">V</span>
+        <span class="profile-label">Account</span>
+      </button>
+
+      <button
+        class="menu-btn"
+        id="menuBtn"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+
+  <main>
+
+
+    <!-- =====================================
+         HERO
+    ====================================== -->
+
+    <section class="contact-hero">
+
+      <div class="hero-orb orb-one"></div>
+      <div class="hero-orb orb-two"></div>
+
+      <div class="hero-grid"></div>
+
+      <div class="container">
+
+        <div class="hero-content reveal">
+
+          <span class="eyebrow">
+            LET'S CONNECT
+          </span>
+
+          <h1>
+            We're here to
+            <span>help.</span>
+          </h1>
+
+          <p>
+            Have a question about charging stations,
+            reservations or Voltiva services?
+            Send us a message and our team will get
+            back to you.
+          </p>
+
+          <div class="hero-pills">
+
+            <span>
+              <b></b>
+              Fast Support
+            </span>
+
+            <span>
+              <b></b>
+              EV Experts
+            </span>
+
+            <span>
+              <b></b>
+              Chennai Network
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================
+         CONTACT INFO
+    ====================================== -->
+
+    <section class="contact-info-section">
+
+      <div class="container">
+
+        <div class="contact-info-grid">
+
+
+          <!-- Email -->
+          <article class="info-card reveal">
+
+            <div class="info-icon">
+              ✉
+            </div>
+
+            <div>
+              <span class="info-label">
+                EMAIL US
+              </span>
+
+              <h3>
+                hello@voltiva.com
+              </h3>
+
+              <p>
+                General questions and support.
+              </p>
+            </div>
+
+          </article>
+
+
+          <!-- Phone -->
+          <article class="info-card reveal">
+
+            <div class="info-icon">
+              ☎
+            </div>
+
+            <div>
+              <span class="info-label">
+                CALL US
+              </span>
+
+              <h3>
+                +91 800 123 4567
+              </h3>
+
+              <p>
+                Mon – Sat · 9 AM – 7 PM
+              </p>
+            </div>
+
+          </article>
+
+
+          <!-- Location -->
+          <article class="info-card reveal">
+
+            <div class="info-icon">
+              ⌖
+            </div>
+
+            <div>
+              <span class="info-label">
+                VISIT US
+              </span>
+
+              <h3>
+                Chennai, India
+              </h3>
+
+              <p>
+                Voltiva Mobility Center.
+              </p>
+            </div>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================
+         CONTACT FORM + LOCATION
+    ====================================== -->
+
+    <section class="contact-section">
+
+      <div class="container">
+
+        <div class="contact-layout">
+
+
+          <!-- =================================
+               FORM
+          ================================== -->
+
+          <div class="form-card reveal">
+
+            <div class="form-heading">
+
+              <span class="small-label">
+                SEND A MESSAGE
+              </span>
+
+              <h2>
+                Tell us what
+                <span>you need.</span>
+              </h2>
+
+              <p>
+                Fill out the form below and our
+                support team will contact you shortly.
+              </p>
+
+            </div>
+
+
+            <form
+              id="contactForm"
+              novalidate
+            >
+
+
+              <!-- Name + Email -->
+
+              <div class="form-grid">
+
+                <div class="form-group">
+
+                  <label for="name">
+                    Full Name
+                  </label>
+
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="Enter your name"
+                    autocomplete="name"
+                  >
+
+                  <small
+                    class="field-error"
+                    id="nameError"
+                  ></small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label for="email">
+                    Email Address
+                  </label>
+
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                  >
+
+                  <small
+                    class="field-error"
+                    id="emailError"
+                  ></small>
+
+                </div>
+
+              </div>
+
+
+              <!-- Subject -->
+
+              <div class="form-group">
+
+                <label for="subject">
+                  Subject
+                </label>
+
+                <select
+                  id="subject"
+                  name="subject"
+                >
+
+                  <option value="">
+                    Select a topic
+                  </option>
+
+                  <option value="charging">
+                    Charging Stations
+                  </option>
+
+                  <option value="reservation">
+                    Reservation
+                  </option>
+
+                  <option value="payment">
+                    Payment & Billing
+                  </option>
+
+                  <option value="account">
+                    Account Support
+                  </option>
+
+                  <option value="partnership">
+                    Partnership
+                  </option>
+
+                  <option value="other">
+                    Other
+                  </option>
+
+                </select>
+
+                <small
+                  class="field-error"
+                  id="subjectError"
+                ></small>
+
+              </div>
+
+
+              <!-- Message -->
+
+              <div class="form-group">
+
+                <label for="message">
+                  Message
+                </label>
+
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="6"
+                  maxlength="500"
+                  placeholder="How can we help you?"
+                ></textarea>
+
+                <div class="message-bottom">
+
+                  <small
+                    class="field-error"
+                    id="messageError"
+                  ></small>
+
+                  <span id="charCount">
+                    0 / 500
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <!-- Consent -->
+
+              <label class="checkbox-row">
+
+                <input
+                  type="checkbox"
+                  id="consent"
+                >
+
+                <span>
+                  I agree to be contacted by the
+                  Voltiva support team.
+                </span>
+
+              </label>
+
+              <small
+                class="field-error"
+                id="consentError"
+              ></small>
+
+
+              <!-- Submit -->
+
+              <button
+                class="submit-btn"
+                type="submit"
+                id="submitBtn"
+              >
+
+                <span>
+                  Send Message
+                </span>
+
+                <span class="submit-arrow">
+                  →
+                </span>
+
+              </button>
+
+            </form>
+
+          </div>
+
+
+          <!-- =================================
+               LOCATION PANEL
+          ================================== -->
+
+          <aside class="location-panel reveal">
+
+            <div class="location-heading">
+
+              <span class="small-label">
+                FIND US
+              </span>
+
+              <h2>
+                Voltiva
+                <span>Mobility Center</span>
+              </h2>
+
+              <p>
+                Chennai is home to our mobility
+                operations and EV charging network.
+              </p>
+
+            </div>
+
+
+            <!-- Real Map -->
+
+            <div
+              class="map-box"
+              id="contactMap"
+            ></div>
+
+
+            <!-- Address -->
+
+            <div class="address-block">
+
+              <div class="address-icon">
+                ⌖
+              </div>
+
+              <div>
+
+                <strong>
+                  Mobility Center
+                </strong>
+
+                <p>
+                  24 Green Mobility Road,<br>
+                  Chennai, Tamil Nadu 600001
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- Hours -->
+
+            <div class="hours-block">
+
+              <div class="hours-row">
+                <span>
+                  Monday – Friday
+                </span>
+
+                <strong>
+                  09:00 – 19:00
+                </strong>
+              </div>
+
+              <div class="hours-row">
+                <span>
+                  Saturday
+                </span>
+
+                <strong>
+                  10:00 – 17:00
+                </strong>
+              </div>
+
+              <div class="hours-row">
+                <span>
+                  Sunday
+                </span>
+
+                <strong class="closed">
+                  Closed
+                </strong>
+              </div>
+
+            </div>
+
+          </aside>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================
+         SUPPORT CTA
+    ====================================== -->
+
+    <section class="support-section">
+
+      <div class="container">
+
+        <div class="support-box reveal">
+
+          <div class="support-icon">
+            ?
+          </div>
+
+          <div class="support-content">
+
+            <span class="small-label">
+              NEED QUICK HELP?
+            </span>
+
+            <h2>
+              Most questions are already answered.
+            </h2>
+
+            <p>
+              Check our frequently asked questions
+              before contacting support.
+            </p>
+
+          </div>
+
+          <a
+            href="faq.html"
+            class="support-btn"
+          >
+            Visit FAQ
+            <span>→</span>
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================================
+       FOOTER
+  ========================================== -->
+
+ <footer class="site-footer">
+    <div class="footer-top">
+      <a class="brand" href="../index.html"><span class="brand-mark"><span></span></span><span>voltiva<span class="brand-dot">.</span></span></a>
+      <p>Intelligent charging for a moving world.</p>
+      <div class="footer-links"><a href="about.html">About</a><a href="services.html">Services</a><a href="blog.html">Blog</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Voltiva. Portfolio project.</span><span>Designed for the road ahead ⚡</span></div>
+  </footer>
+
+  <!-- =========================================
+       TOAST
+  ========================================== -->
+
+  <div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+
+  <!-- Leaflet -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
+
+  <!-- Contact JS -->
+  <script src="../assets/js/contact.js"></script>
+
+</body>
+</html>
